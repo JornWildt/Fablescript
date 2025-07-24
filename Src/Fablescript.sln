@@ -27,6 +27,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.AppHost", "Fabl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.ServiceDefaults", "Fablescript.ServiceDefaults\Fablescript.ServiceDefaults.csproj", "{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Extra", "_Extra", "{082B39BC-45E7-4776-81AE-32C3A835704E}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

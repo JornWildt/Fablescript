@@ -4,6 +4,6 @@ namespace Fablescript.Core.GameConfiguration
 {
   public interface ILocationProvider
   {
-    Location Get(LocationId id);
+    Task<Location> GetAsync(LocationId id);
   }
 }

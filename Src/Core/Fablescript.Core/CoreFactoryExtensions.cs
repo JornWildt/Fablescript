@@ -1,10 +1,16 @@
 ﻿using Fablescript.Core.Contract;
 using Fablescript.Core.Engine;
 using Fablescript.Core.GameConfiguration;
+using Fablescript.Core.LLM;
+using Fablescript.Core.OpenAI;
+using Fablescript.Core.Prompts;
+using Fablescript.Core.Templating;
+using Fablescript.Utility.Base.Configuration;
 using Fablescript.Utility.Base.UnitOfWork;
 using Fablescript.Utility.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Fablescript.Core
 {
@@ -19,7 +25,26 @@ namespace Fablescript.Core
       services.AddSingleton<ILocationProvider, LocationProvider>();
 
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
-      //services.AddVerifiedConfiguration<CoreConfiguration>(configuration, "Core");
+
+      var promptConfig = configuration.GetVerifiedConfigurationSection<PromptProviderConfiguration>("Prompts");
+
+      services.AddSingleton(serviceProvider =>
+      {
+        return new PromptDefinitionParser(
+          new PromptDefinitionParser.FileWatchParserConfiguration(promptConfig.PromptDirectory, null),
+          serviceProvider.GetRequiredService<ILogger<PromptDefinitionParser>>());
+      });
+      services.AddSingleton<IPromptDefinitionProvider, TextFilePromptDefinitionProvider>();
+
+      services.AddSingleton<IPromptRunner, PromptRunner>();
+      services.AddSingleton<IStructuredPromptRunner, StructuredPromptRunner>();
+      
+      services.AddSingleton<ITemplateEngine, TemplateEngine>();
+
+      services.AddVerifiedConfiguration<AIClientConfiguration>(configuration, "AIClient");
+
+      services.AddSingleton<ILLMGenerator, OpenAILLMGenerator>();
+      services.AddSingleton<ILLMStructuredGenerator, LLMStructuredGenerator>();
 
       return services;
     }

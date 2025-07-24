@@ -5,9 +5,22 @@ namespace Fablescript.Core.GameConfiguration
 {
   public class Location : Entity<LocationId>
   {
-    public Location(LocationId id)
+    public string LocationName { get; set; }
+
+    public string Introduction { get; set; }
+    public string[] Facts { get; set; }
+    
+    
+    public Location(
+      LocationId id,
+      string locationName,
+      string introduction,
+      string[] facts)
       : base(id)
     {
+      LocationName = locationName;
+      Introduction = introduction;
+      Facts = facts;
     }
   }
 }

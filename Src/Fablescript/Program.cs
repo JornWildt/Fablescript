@@ -5,6 +5,7 @@ using Fablescript.Core.Database;
 using Fablescript.Core.GameConfiguration;
 using Fablescript.Utility.Services.CommandQuery;
 using Fablescript.Utility.Services.Contract.CommandQuery;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -15,6 +16,8 @@ namespace Fablescript
     static async Task Main(string[] args)
     {
       HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+
+      builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true);
 
       ActivitySource programSource = new ActivitySource(builder.Environment.ApplicationName, "1.0.0");
       builder.Services.AddSingleton(programSource);

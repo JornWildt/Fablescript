@@ -4,9 +4,9 @@
   {
     protected static bool EqualOperator(ValueObject? left, ValueObject? right)
     {
-      if (left != null && right != null)
+      if (left is not null && right is not null)
         return ReferenceEquals(left, right);
-      else if (left == null && right == null)
+      else if (left is null && right is null)
         return true;
       else
         return false;

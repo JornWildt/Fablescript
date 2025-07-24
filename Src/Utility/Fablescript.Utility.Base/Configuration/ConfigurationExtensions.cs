@@ -22,6 +22,7 @@ namespace Fablescript.Utility.Base.Configuration
       return services;
     }
 
+    
     public static bool TryGetVerifiedConfigurationSection<T>(this IConfiguration config, string sectionName, out T result)
       where T : class, new()
     {

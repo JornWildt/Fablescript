@@ -1,5 +1,6 @@
 ﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Engine;
+using Fablescript.Core.GameConfiguration;
 using Fablescript.Utility.Base.Persistence;
 
 namespace Fablescript.Core.Database.Engine
@@ -33,7 +34,11 @@ namespace Fablescript.Core.Database.Engine
 
     Task<Player> IRepository<Player, PlayerId>.GetAsync(PlayerId id)
     {
-      throw new NotImplementedException();
+      var player = new Player(
+        TemporaryConstants.PlayerId,
+        TemporaryConstants.InitialLocationId);
+
+      return Task.FromResult(player);
     }
 
     void IRepository<Player, PlayerId>.Remove(PlayerId id)

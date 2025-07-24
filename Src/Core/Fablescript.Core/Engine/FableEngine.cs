@@ -1,5 +1,7 @@
 ﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Engine.Commands;
+using Fablescript.Core.GameConfiguration;
+using Fablescript.Core.Prompts;
 using Fablescript.Utility.Services.CommandQuery;
 
 namespace Fablescript.Core.Engine
@@ -9,13 +11,44 @@ namespace Fablescript.Core.Engine
     ICommandHandler<DescribeSceneCommand>,
     ICommandHandler<ApplyUserInputCommand>
   {
-    Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
+    #region Dependencies
+
+    private readonly IPlayerRepository PlayerRepository;
+    private readonly ILocationProvider LocationProvider;
+    private readonly IPromptRunner PromptRunner;
+    private readonly IStructuredPromptRunner StructuredPromptRunner;
+
+    #endregion
+
+
+    public FableEngine(
+      IPlayerRepository playerRepository,
+      ILocationProvider locationProvider,
+      IPromptRunner promptRunner,
+      IStructuredPromptRunner structuredPromptRunner)
     {
-      cmd.Answer.Value = "A ghastly fishing town.";
-      return Task.CompletedTask;
+      PlayerRepository = playerRepository;
+      LocationProvider = locationProvider;
+      PromptRunner = promptRunner;
+      StructuredPromptRunner = structuredPromptRunner;
     }
 
-    
+
+    async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
+    {
+      var player = await PlayerRepository.GetAsync(cmd.PlayerId);
+      var location = await LocationProvider.GetAsync(player.Location);
+      var args = new 
+      { 
+        LocationName = location.LocationName,
+        Introduction = location.Introduction,
+        Facts = location.Facts
+      };
+      var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
+      cmd.Answer.Value = response;
+    }
+
+
     Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       cmd.Answer.Value = "You said: " + cmd.UserInput;
