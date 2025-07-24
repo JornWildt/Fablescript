@@ -42,7 +42,8 @@ namespace Fablescript.Core.Engine
       { 
         LocationName = location.LocationName,
         Introduction = location.Introduction,
-        Facts = location.Facts
+        Facts = location.Facts,
+        Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray()
       };
       var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
       cmd.Answer.Value = response;

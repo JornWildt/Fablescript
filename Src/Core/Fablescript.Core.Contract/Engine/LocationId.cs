@@ -2,9 +2,9 @@
 
 namespace Fablescript.Core.Contract.Engine
 {
-  public class LocationId : EntityId<Guid>
+  public class LocationId : EntityId<string>
   {
-    public LocationId(Guid value)
+    public LocationId(string value)
       : base(value)
     {
     }
