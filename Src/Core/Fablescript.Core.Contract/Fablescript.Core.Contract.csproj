@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Engine\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Utility\Fablescript.Utility.Base\Fablescript.Utility.Base.csproj" />
+    <ProjectReference Include="..\..\Utility\Fablescript.Utility.Services.Contract\Fablescript.Utility.Services.Contract.csproj" />
+  </ItemGroup>
+
+</Project>

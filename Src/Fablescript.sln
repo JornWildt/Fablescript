@@ -1,0 +1,92 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36310.24
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Utility.Base", "Utility\Fablescript.Utility.Base\Fablescript.Utility.Base.csproj", "{E091E32D-B8B6-4477-826D-1151D7FCDB30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Utility.Database", "Utility\Fablescript.Utility.Database\Fablescript.Utility.Database.csproj", "{00060F5A-CBF1-2F74-8AE4-8FFB827A3C75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Utility.Services", "Utility\Fablescript.Utility.Services\Fablescript.Utility.Services.csproj", "{7CD75EAE-7597-9A8F-4EA2-1C6E14FFC99A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Utility.Services.Contract", "Utility\Fablescript.Utility.Services.Contract\Fablescript.Utility.Services.Contract.csproj", "{C97ACF18-7DCD-FA0D-30D4-E953E767F6C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Core.Contract", "Core\Fablescript.Core.Contract\Fablescript.Core.Contract.csproj", "{53657D01-2CCC-B139-A124-5DA7C6063BFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Core", "Core\Fablescript.Core\Fablescript.Core.csproj", "{033FBFED-2568-BD8C-FEA5-77650A377402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript", "Fablescript\Fablescript.csproj", "{22E75A91-A0E6-52EF-DD4B-BBA465F648F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Core.Database", "Core\Fablescript.Core.Database\Fablescript.Core.Database.csproj", "{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.AppHost", "Fablescript.AppHost\Fablescript.AppHost.csproj", "{92722DAA-3D33-8C55-AF1F-61D55414363F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.ServiceDefaults", "Fablescript.ServiceDefaults\Fablescript.ServiceDefaults.csproj", "{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E091E32D-B8B6-4477-826D-1151D7FCDB30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E091E32D-B8B6-4477-826D-1151D7FCDB30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E091E32D-B8B6-4477-826D-1151D7FCDB30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E091E32D-B8B6-4477-826D-1151D7FCDB30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00060F5A-CBF1-2F74-8AE4-8FFB827A3C75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00060F5A-CBF1-2F74-8AE4-8FFB827A3C75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00060F5A-CBF1-2F74-8AE4-8FFB827A3C75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00060F5A-CBF1-2F74-8AE4-8FFB827A3C75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CD75EAE-7597-9A8F-4EA2-1C6E14FFC99A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CD75EAE-7597-9A8F-4EA2-1C6E14FFC99A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CD75EAE-7597-9A8F-4EA2-1C6E14FFC99A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CD75EAE-7597-9A8F-4EA2-1C6E14FFC99A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C97ACF18-7DCD-FA0D-30D4-E953E767F6C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C97ACF18-7DCD-FA0D-30D4-E953E767F6C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C97ACF18-7DCD-FA0D-30D4-E953E767F6C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C97ACF18-7DCD-FA0D-30D4-E953E767F6C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53657D01-2CCC-B139-A124-5DA7C6063BFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53657D01-2CCC-B139-A124-5DA7C6063BFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53657D01-2CCC-B139-A124-5DA7C6063BFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53657D01-2CCC-B139-A124-5DA7C6063BFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{033FBFED-2568-BD8C-FEA5-77650A377402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{033FBFED-2568-BD8C-FEA5-77650A377402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{033FBFED-2568-BD8C-FEA5-77650A377402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{033FBFED-2568-BD8C-FEA5-77650A377402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22E75A91-A0E6-52EF-DD4B-BBA465F648F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22E75A91-A0E6-52EF-DD4B-BBA465F648F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22E75A91-A0E6-52EF-DD4B-BBA465F648F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22E75A91-A0E6-52EF-DD4B-BBA465F648F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92722DAA-3D33-8C55-AF1F-61D55414363F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92722DAA-3D33-8C55-AF1F-61D55414363F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92722DAA-3D33-8C55-AF1F-61D55414363F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92722DAA-3D33-8C55-AF1F-61D55414363F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E091E32D-B8B6-4477-826D-1151D7FCDB30} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{00060F5A-CBF1-2F74-8AE4-8FFB827A3C75} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7CD75EAE-7597-9A8F-4EA2-1C6E14FFC99A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C97ACF18-7DCD-FA0D-30D4-E953E767F6C3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{53657D01-2CCC-B139-A124-5DA7C6063BFC} = {2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}
+		{033FBFED-2568-BD8C-FEA5-77650A377402} = {2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}
+		{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC} = {2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A616809-78DF-4E01-ABD8-D7157B632EA0}
+	EndGlobalSection
+EndGlobal
