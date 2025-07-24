@@ -38,22 +38,64 @@ namespace Fablescript.Core.Engine
     {
       var player = await PlayerRepository.GetAsync(cmd.PlayerId);
       var location = await LocationProvider.GetAsync(player.Location);
-      var args = new 
-      { 
+      var sceneDescription = await DescribeScene(location);
+      cmd.Answer.Value = sceneDescription;
+    }
+
+
+    async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
+    {
+      var player = await PlayerRepository.GetAsync(cmd.PlayerId);
+      var location = await LocationProvider.GetAsync(player.Location);
+      var args = new
+      {
+        LocationName = location.LocationName,
+        Introduction = location.Introduction,
+        Facts = location.Facts,
+        Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray(),
+        PlayerInput = cmd.PlayerInput
+      };
+      var response = await StructuredPromptRunner.RunPromptAsync<PlayerIntent>("DecodeUserIntent", args);
+
+      if (response.intent == "move" && response.move_exit_id != null)
+      {
+        var exit = location.Exits.FirstOrDefault(x => x.Id == response.move_exit_id);
+        if (exit != null)
+        {
+          var newLocation = await LocationProvider.TryGetAsync(exit.TargetLocationId);
+          if (newLocation != null)
+          {
+            player.Location = newLocation.Id;
+            
+            var sceneDescription = await DescribeScene(newLocation);
+            cmd.Answer.Value = sceneDescription;
+            return;
+          }
+        }
+      }
+
+      var idleResponse = await PromptRunner.RunPromptAsync("IdleUserInputResponse", args);
+      cmd.Answer.Value += idleResponse;
+    }
+
+
+    private async Task<string> DescribeScene(Location location)
+    {
+      var args = new
+      {
         LocationName = location.LocationName,
         Introduction = location.Introduction,
         Facts = location.Facts,
         Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray()
       };
       var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
-      cmd.Answer.Value = response;
+      return response;
     }
 
-
-    Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
+    public class PlayerIntent
     {
-      cmd.Answer.Value = "You said: " + cmd.UserInput;
-      return Task.CompletedTask;
+      public string? intent { get; set; }
+      public string? move_exit_id { get; set; }
     }
   }
 }

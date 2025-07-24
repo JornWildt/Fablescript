@@ -7,6 +7,19 @@ namespace Fablescript.Core.Database.Engine
 {
   internal class PlayerRepository : IPlayerRepository
   {
+    private static IDictionary<PlayerId, Player> Players { get; }
+
+    static PlayerRepository()
+    {
+      Players = new Dictionary<PlayerId, Player>()
+      {
+        [TemporaryConstants.PlayerId] = new Player(
+          TemporaryConstants.PlayerId,
+          TemporaryConstants.InitialLocationId)
+      };
+    }
+
+
     void IRepository<Player, PlayerId>.Add(Player entity)
     {
       throw new NotImplementedException();
@@ -34,9 +47,7 @@ namespace Fablescript.Core.Database.Engine
 
     Task<Player> IRepository<Player, PlayerId>.GetAsync(PlayerId id)
     {
-      var player = new Player(
-        TemporaryConstants.PlayerId,
-        TemporaryConstants.InitialLocationId);
+      var player = Players[id];
 
       return Task.FromResult(player);
     }
