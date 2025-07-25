@@ -7,7 +7,7 @@ namespace Fablescript.Core.GameConfiguration
   {
     public string LocationName { get; set; }
 
-    public string Introduction { get; set; }
+    public string? Introduction { get; set; }
     
     public string[] Facts { get; set; }
 
@@ -17,7 +17,7 @@ namespace Fablescript.Core.GameConfiguration
     public Location(
       LocationId id,
       string locationName,
-      string introduction,
+      string? introduction,
       string[] facts,
       Exit[] exits)
       : base(id)
@@ -33,10 +33,10 @@ namespace Fablescript.Core.GameConfiguration
     {
       public string Id { get; set; }
       public string Name { get; set; }
-      public string Description { get; set; }
+      public string? Description { get; set; }
       public LocationId TargetLocationId { get; set; }
 
-      public Exit(string id, string name, string description, LocationId targetLocationId)
+      public Exit(string id, string name, string? description, LocationId targetLocationId)
       {
         Id = id;
         Name = name;

@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           targetNamespace="https://fablescript.org/schema/core"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:html="http://www.w3.org/1999/xhtml"
+           xmlns:m="https://fablescript.org/schema/core">
+
+  <xs:element name="Fable" type="m:FableType"/>
+
+  <xs:complexType name="FableType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>This is the root element for the fable definition file.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Title" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Title of this fable.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Description of this fable.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="InitialLocation" type="m:IdentifierString" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Initial player location name.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Locations" type="m:LocationsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Locations</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+
+  <xs:complexType name="LocationsType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>List of locations in the game.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Location" type="m:LocationType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Single location.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="LocationType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Definition of single location.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Name" type="m:IdentifierString" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of this location. Used for internal references.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Title" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Descriptive title for this location.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Introduction" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Introduction to this location. Will only be shown first time the player enters the location.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Facts" type="m:FactsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Facts.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Exits" type="m:ExitsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Exits.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+
+  <xs:complexType name="FactsType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>List of facts applying to the current location.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Fact" type="m:FactType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Single fact.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="FactType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Definition of single fact about a location.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Text" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Fact text.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+
+  <xs:complexType name="ExitsType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>List of exits for the current location.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Exit" type="m:ExitType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Single exit.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="ExitType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Definition of single exit at a location.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Name" type="m:IdentifierString" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of this exit. Used for internal references.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Title" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Descriptive title for this exit.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Full description of this exit.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TargetLocationName" type="m:IdentifierString" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of the location this exit leads to.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  
+  <xs:simpleType name="IdentifierString">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-zA-Z][a-zA-Z0-9_]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

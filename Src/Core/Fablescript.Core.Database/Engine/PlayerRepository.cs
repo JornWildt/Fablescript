@@ -1,4 +1,5 @@
 ﻿using Fablescript.Core.Contract.Engine;
+using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Core.Engine;
 using Fablescript.Core.GameConfiguration;
 using Fablescript.Utility.Base.Persistence;
@@ -15,6 +16,7 @@ namespace Fablescript.Core.Database.Engine
       {
         [TemporaryConstants.PlayerId] = new Player(
           TemporaryConstants.PlayerId,
+          new FableId("Jokull"), // FIXME: hardcoded
           TemporaryConstants.InitialLocationId)
       };
     }

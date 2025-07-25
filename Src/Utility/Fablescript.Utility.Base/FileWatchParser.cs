@@ -27,59 +27,6 @@ namespace Fablescript.Utility.Base
     public record FileWatchParserConfiguration(string SourceDir , string? SchemaDir);
 
 
-    #region Configuration settings
-
-
-    //private static string? _sourceDir;
-    //public static string SourceDir
-    //{
-    //  get
-    //  {
-    //    if (_sourceDir == null)
-    //    {
-    //      _sourceDir = FileUtils.MapPathToBaseDir(SourceDirAppSetting, defaultValue: DefaultSourceDir);
-    //    }
-    //    return _sourceDir;
-    //  }
-    //  set
-    //  {
-    //    string mappedPath = FileUtils.MapPathToBaseDir(value);
-    //    if (_sourceDir != mappedPath)
-    //    {
-    //      ClearCache();
-    //      _sourceDir = mappedPath;
-    //      TryCreateOrSetFileWatcherPath();
-    //    }
-    //  }
-    //}
-
-
-    //private static string? _schemaDir;
-    //public static string SchemaDir
-    //{
-    //  get
-    //  {
-    //    if (_schemaDir == null)
-    //    {
-    //      _schemaDir = FileUtils.MapPathToBaseDir(SchemaDirAppSetting, defaultValue: DefaultSchemaDir);
-    //    }
-    //    return _schemaDir;
-    //  }
-    //  set
-    //  {
-    //    string mappedPath = FileUtils.MapPathToBaseDir(value);
-    //    if (_schemaDir != mappedPath)
-    //    {
-    //      ClearCache();
-    //      _schemaDir = mappedPath;
-    //      TryCreateOrSetFileWatcherPath();
-    //    }
-    //  }
-    //}
-
-    #endregion
-
-
     protected FileSystemWatcher Watcher;
     protected List<string> ParseErrors = new List<string>();
 

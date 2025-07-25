@@ -1,59 +1,76 @@
 ﻿using Fablescript.Core.Contract.Engine;
+using Fablescript.Core.Contract.Fablescript;
+using Fablescript.Core.Fablescript;
 
 namespace Fablescript.Core.GameConfiguration
 {
   internal class LocationProvider : ILocationProvider
   {
-    async Task<Location> ILocationProvider.GetAsync(LocationId id)
+    #region Dependencies
+
+    private readonly IFablescriptParser FablescriptParser;
+
+    #endregion
+
+
+    public LocationProvider(IFablescriptParser fablescriptParser)
     {
-      var location = await TryGetAsync(id);
+      FablescriptParser = fablescriptParser;
+    }
+
+    
+    async Task<Location> ILocationProvider.GetAsync(FableId fableId, LocationId locationId)
+    {
+      var location = await TryGetAsync(fableId, locationId);
       if (location == null)
-        throw new InvalidOperationException($"No location with ID: {id}");
+        throw new InvalidOperationException($"No location '{locationId}' in fable '{fableId}'");
       return location;
     }
 
     
-    Task<Location?> ILocationProvider.TryGetAsync(LocationId id)
+    Task<Location?> ILocationProvider.TryGetAsync(FableId fableId, LocationId locationId)
     {
-      return TryGetAsync(id);
+      return TryGetAsync(fableId, locationId);
     }
 
     
-    private Task<Location?> TryGetAsync(LocationId id)
+    private async Task<Location?> TryGetAsync(FableId fableId, LocationId locationId)
     {
-      if (id == TemporaryConstants.BlackBeachId)
-        return Task.FromResult<Location?>(new Location(
-          id,
-          "Black sand beach",
-          "You find yourself resting on the sand with no rememberence of how you came here or who you are.",
-          [
-            "The beach stretches as far as you can see to the east and west.",
-            "Black sand covers all the beach.",
-            "The sea is calm and stretches to infinity without interruptions.",
-            "Soft mountains rises in the distance to the north. A huge glacier tops the central mountain."
-          ],
-          [
-            new Location.Exit("east", "East", "The beach stretches to the east.", TemporaryConstants.BlackBeachEastId)
-          ]
-          ));
-      else if (id == TemporaryConstants.BlackBeachEastId)
-        return Task.FromResult<Location?>(new Location(
-          id,
-          "Eastern end of black sand beach",
-          "",
-          [
-            "The beach stretches as far as you can see to the west.",
-            "Cliffs rises in the east",
-            "Black sand covers all the beach.",
-            "The sea is calm and stretches to infinity without interruptions.",
-            "Soft mountains rises in the distance to the north. A huge glacier tops the central mountain."
-          ],
-          [
-            new Location.Exit("west", "West", "The beach stretches to the west.", TemporaryConstants.BlackBeachId)
-          ]
-          ));
-      else
-        return Task.FromResult<Location?>(null);
+      var ldef = await FablescriptParser.TryGetAsync(fableId, locationId);
+      if (ldef == null)
+        return null;
+
+      // Locations never changes, so conversion result could be cached, as long as the cache is cleared when everything is reloaded.
+      var location = new Location(
+        new LocationId(ldef.Name),
+        ldef.Title,
+        ldef.Introduction,
+        ConvertFacts(ldef.Facts),
+        ConvertExits(ldef.Exits));
+
+      return location;
+    }
+
+
+    private string[] ConvertFacts(LocationFactDefinition[]? facts)
+    {
+      if (facts == null)
+        return [];
+
+      return facts
+        .Select(f => f.Text)
+        .ToArray();
+    }
+
+
+    private Location.Exit[] ConvertExits(LocationExitDefinition[]? exits)
+    {
+      if (exits == null)
+        return [];
+
+      return exits
+        .Select(x => new Location.Exit(x.Name, x.Title, x.Description, new LocationId(x.TargetLocationName)))
+        .ToArray();
     }
   }
 }

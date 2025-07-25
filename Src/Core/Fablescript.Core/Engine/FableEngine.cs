@@ -37,7 +37,7 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
       var player = await PlayerRepository.GetAsync(cmd.PlayerId);
-      var location = await LocationProvider.GetAsync(player.Location);
+      var location = await LocationProvider.GetAsync(player.FableId, player.LocationId);
       var sceneDescription = await DescribeScene(location);
       cmd.Answer.Value = sceneDescription;
     }
@@ -46,7 +46,7 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var player = await PlayerRepository.GetAsync(cmd.PlayerId);
-      var location = await LocationProvider.GetAsync(player.Location);
+      var location = await LocationProvider.GetAsync(player.FableId, player.LocationId);
       var args = new
       {
         LocationName = location.LocationName,
@@ -62,10 +62,10 @@ namespace Fablescript.Core.Engine
         var exit = location.Exits.FirstOrDefault(x => x.Id == response.move_exit_id);
         if (exit != null)
         {
-          var newLocation = await LocationProvider.TryGetAsync(exit.TargetLocationId);
+          var newLocation = await LocationProvider.TryGetAsync(player.FableId, exit.TargetLocationId);
           if (newLocation != null)
           {
-            player.Location = newLocation.Id;
+            player.LocationId = newLocation.Id;
             
             var sceneDescription = await DescribeScene(newLocation);
             cmd.Answer.Value = sceneDescription;

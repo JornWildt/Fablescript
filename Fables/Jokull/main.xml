@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Fable xmlns="https://fablescript.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://fablescript.org/schema/core ../../Src/Core/Fablescript.Core/Fablescript/Fablescript.xsd">
+  <Title>Jokull</Title>
+  <Description>A story of ice and mystery.</Description>
+  <InitialLocation>BlackBeach</InitialLocation>
+  <Locations>
+    <Location>
+      <Name>BlackBeach</Name>
+      <Title>Black sand beach</Title>
+      <Introduction>You find yourself resting on the sand with no rememberence of how you came here or who you are.</Introduction>
+      <Facts>
+        <Fact>
+          <Text>The beach stretches as far as you can see to the east and west.</Text>
+        </Fact>
+        <Fact>
+          <Text>Black sand covers all the beach.</Text>
+        </Fact>
+        <Fact>
+          <Text>The sea is calm and stretches to infinity without interruptions.</Text>
+        </Fact>
+        <Fact>
+          <Text>Soft mountains rises in the distance to the north. A huge glacier tops the central mountain.</Text>
+        </Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
+          <Description>The beach stretches to the east.</Description>
+          <TargetLocationName>BlackBeachEast</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>BlackBeachEast</Name>
+      <Title>Eastern end of black sand beach</Title>
+      <Facts>
+        <Fact>
+          <Text>The beach stretches as far as you can see to the west.</Text>
+        </Fact>
+        <Fact>
+          <Text>Cliffs rises in the east.</Text>
+        </Fact>
+        <Fact>
+          <Text>Black sand covers all the beach.</Text>
+        </Fact>
+        <Fact>
+          <Text>The sea is calm and stretches to infinity without interruptions.</Text>
+        </Fact>
+        <Fact>
+          <Text>Soft mountains rises in the distance to the north. A huge glacier tops the central mountain.</Text>
+        </Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>West</Name>
+          <Title>West</Title>
+          <Description>The beach stretches to the west.</Description>
+          <TargetLocationName>BlackBeach</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+  </Locations>
+</Fable>

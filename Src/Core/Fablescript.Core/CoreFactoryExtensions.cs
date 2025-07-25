@@ -1,5 +1,6 @@
 ﻿using Fablescript.Core.Contract;
 using Fablescript.Core.Engine;
+using Fablescript.Core.Fablescript;
 using Fablescript.Core.GameConfiguration;
 using Fablescript.Core.LLM;
 using Fablescript.Core.OpenAI;
@@ -23,6 +24,15 @@ namespace Fablescript.Core
       services.AddAllServiceInterfaces<FableEngine>(asSingleton: false);
       services.AddSingleton<IGameProvider, GameProvider>();
       services.AddSingleton<ILocationProvider, LocationProvider>();
+
+      var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FableScriptConfiguration>("Fablescript");
+
+      services.AddSingleton<IFablescriptParser>(serviceProvider =>
+      {
+        return new FablescriptParser(
+          new FablescriptParser.FileWatchParserConfiguration(fablescriptConfig.FableDirectory, fablescriptConfig.SchemaDirectory),
+          serviceProvider.GetRequiredService<ILogger<FablescriptParser>>());
+      });
 
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
 

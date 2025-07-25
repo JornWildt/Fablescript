@@ -1,20 +1,24 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using Fablescript.Core.Contract.Engine;
+﻿using Fablescript.Core.Contract.Engine;
+using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base.Persistence;
 
 namespace Fablescript.Core.Engine
 {
   public class Player : Entity<PlayerId>
   {
-    public LocationId Location { get; set; }
+    public FableId FableId { get; set; }
+
+    public LocationId LocationId { get; set; }
 
 
     public Player(
       PlayerId id,
-      LocationId location)
+      FableId fableId,
+      LocationId locationId)
       : base(id)
     {
-      Location = location;
+      FableId = fableId;
+      LocationId = locationId;
     }
   }
 }

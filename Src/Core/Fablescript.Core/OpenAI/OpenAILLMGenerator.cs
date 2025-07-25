@@ -9,6 +9,7 @@ using Fablescript.Core.LLM;
 using Microsoft.Extensions.Logging;
 using OpenAI;
 using OpenAI.Chat;
+using LLMChatRole = global::Fablescript.Core.Contract.LLM.ChatRole;
 
 namespace Fablescript.Core.OpenAI
 {
@@ -224,13 +225,13 @@ namespace Fablescript.Core.OpenAI
 
     ChatMessage GetMessage(ChatEntry c)
     {
-      if (c.Role == Fablescript.Core.Contract.LLM.ChatRole.System)
+      if (c.Role == LLMChatRole.System)
         return ChatMessage.CreateSystemMessage(c.Message);
-      else if (c.Role == Fablescript.Core.Contract.LLM.ChatRole.User)
+      else if (c.Role == LLMChatRole.User)
         return ChatMessage.CreateUserMessage(c.Message);
-      else if (c.Role == Fablescript.Core.Contract.LLM.ChatRole.Assistant)
+      else if (c.Role == LLMChatRole.Assistant)
         return ChatMessage.CreateAssistantMessage(c.Message);
-      else if (c.Role == Fablescript.Core.Contract.LLM.ChatRole.Tool)
+      else if (c.Role == LLMChatRole.Tool)
         return ChatMessage.CreateToolMessage(c.Message);
       else
         throw new ArgumentException($"Unexpected chat entry role '{c.Role}'.");
