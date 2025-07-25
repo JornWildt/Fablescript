@@ -61,6 +61,39 @@
           <Description>The beach stretches to the west.</Description>
           <TargetLocationName>BlackBeach</TargetLocationName>
         </Exit>
+        <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
+          <Description>A gentle slope leads uphill to the top of the cliffs.</Description>
+          <TargetLocationName>Cliffs</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>Cliffs</Name>
+      <Title>The cliffs</Title>
+      <Facts>
+        <Fact>
+          <Text>On a remote peninsula where high cliffs meet the sea.</Text>
+        </Fact>
+        <Fact>
+          <Text>Cries from distant shalkren floating on the wind can be heard.</Text>
+        </Fact>
+        <Fact>
+          <Text>At the edge of the cliffs a small Tervuun nests.</Text>
+        </Fact>
+        <Fact>
+          <Text>A smell of old fish fills the air.</Text>
+        </Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>West</Name>
+          <Title>West</Title>
+          <Description>A gentle slope leads west to the black beach.</Description>
+          <TargetLocationName>BlackBeachEast</TargetLocationName>
+        </Exit>
       </Exits>
     </Location>
   </Locations>
