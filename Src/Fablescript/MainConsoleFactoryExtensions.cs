@@ -1,4 +1,5 @@
-﻿using Fablescript.Core.Contract;
+﻿using Fablescript.Core;
+using Fablescript.Core.Contract;
 using Fablescript.Utility.Base.UnitOfWork;
 using Fablescript.Utility.Services.CommandQuery;
 using Microsoft.Extensions.Configuration;

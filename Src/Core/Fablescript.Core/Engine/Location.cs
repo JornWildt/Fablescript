@@ -1,9 +1,9 @@
 ﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Utility.Base.Persistence;
 
-namespace Fablescript.Core.GameConfiguration
+namespace Fablescript.Core.Engine
 {
-  public class Location : Entity<LocationId>
+  internal class Location : Entity<LocationId>
   {
     public string LocationName { get; set; }
 

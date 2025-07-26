@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using Fablescript.Core;
 using Fablescript.Core.Contract.Engine.Commands;
+using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Core.Database;
-using Fablescript.Core.GameConfiguration;
 using Fablescript.Utility.Services.CommandQuery;
 using Fablescript.Utility.Services.Contract.CommandQuery;
 using Microsoft.Extensions.Configuration;
@@ -56,17 +56,24 @@ namespace Fablescript
 
       public async Task Run()
       {
-        var initCommand = new DescribeSceneCommand(TemporaryConstants.PlayerId, new CommandOutput<string>());
-        await CommandProcessor.InvokeCommandAsync(initCommand);
+        var startCmd = new StartFableCommand(
+          new FableId("Jokull"),
+          new CommandOutput<Core.Contract.Engine.PlayerId>());
 
-        Console.WriteLine(initCommand.Answer.Value);
+        await CommandProcessor.InvokeCommandAsync(startCmd);
+        var playerId = startCmd.CreatedPlayerId.Value!;
+
+        var describeCmd = new DescribeSceneCommand(playerId, new CommandOutput<string>());
+        await CommandProcessor.InvokeCommandAsync(describeCmd);
+
+        Console.WriteLine(describeCmd.Answer.Value);
 
         do
         {
           var input = Console.ReadLine();
           if (input != null)
           {
-            var applyCmd = new ApplyUserInputCommand(TemporaryConstants.PlayerId, input, new CommandOutput<string>());
+            var applyCmd = new ApplyUserInputCommand(playerId, input, new CommandOutput<string>());
             await CommandProcessor.InvokeCommandAsync(applyCmd);
 
             Console.WriteLine(applyCmd.Answer.Value);

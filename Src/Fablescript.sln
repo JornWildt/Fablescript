@@ -32,6 +32,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Extra", "_Extra", "{082B39
 		..\.gitignore = ..\.gitignore
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{D4E268DB-674C-4A30-A289-361022F809E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Web.Client", "Web\Fablescript.Web.Client\Fablescript.Web.Client.csproj", "{D78BBEB5-1CD5-4E31-9DB7-ECBA80D9F1F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Utility.AspNet", "Utility\Fablescript.Utility.AspNet\Fablescript.Utility.AspNet.csproj", "{66701717-F9CE-9F5F-0A80-E67EE80E9291}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +84,14 @@ Global
 		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D07EFA04-5628-0C2B-3FB4-E10482DADBCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D78BBEB5-1CD5-4E31-9DB7-ECBA80D9F1F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D78BBEB5-1CD5-4E31-9DB7-ECBA80D9F1F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D78BBEB5-1CD5-4E31-9DB7-ECBA80D9F1F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D78BBEB5-1CD5-4E31-9DB7-ECBA80D9F1F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66701717-F9CE-9F5F-0A80-E67EE80E9291}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66701717-F9CE-9F5F-0A80-E67EE80E9291}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66701717-F9CE-9F5F-0A80-E67EE80E9291}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66701717-F9CE-9F5F-0A80-E67EE80E9291}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +104,8 @@ Global
 		{53657D01-2CCC-B139-A124-5DA7C6063BFC} = {2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}
 		{033FBFED-2568-BD8C-FEA5-77650A377402} = {2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}
 		{E2A8830E-FABC-4D55-A14B-DAA9A26C7FBC} = {2B5F9CA1-94BB-4157-8411-1DBF9D69AAAD}
+		{D78BBEB5-1CD5-4E31-9DB7-ECBA80D9F1F5} = {D4E268DB-674C-4A30-A289-361022F809E4}
+		{66701717-F9CE-9F5F-0A80-E67EE80E9291} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A616809-78DF-4E01-ABD8-D7157B632EA0}

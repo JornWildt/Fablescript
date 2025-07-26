@@ -1,7 +1,6 @@
-﻿using Fablescript.Core.Contract.Engine;
-using Fablescript.Core.Contract.Fablescript;
+﻿using System.Collections.Concurrent;
+using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Engine;
-using Fablescript.Core.GameConfiguration;
 using Fablescript.Utility.Base.Persistence;
 
 namespace Fablescript.Core.Database.Engine
@@ -12,13 +11,8 @@ namespace Fablescript.Core.Database.Engine
 
     static PlayerRepository()
     {
-      Players = new Dictionary<PlayerId, Player>()
-      {
-        [TemporaryConstants.PlayerId] = new Player(
-          TemporaryConstants.PlayerId,
-          new FableId("Jokull"), // FIXME: hardcoded
-          TemporaryConstants.InitialLocationId)
-      };
+      // FIXME: Use persistent database
+      Players = new ConcurrentDictionary<PlayerId, Player>();
     }
 
 
@@ -27,9 +21,10 @@ namespace Fablescript.Core.Database.Engine
       throw new NotImplementedException();
     }
 
-    Task IRepository<Player, PlayerId>.AddAsync(Player entity)
+    Task IRepository<Player, PlayerId>.AddAsync(Player player)
     {
-      throw new NotImplementedException();
+      Players.TryAdd(player.Id, player);
+      return Task.CompletedTask;
     }
 
     Player IRepository<Player, PlayerId>.Get(PlayerId id)

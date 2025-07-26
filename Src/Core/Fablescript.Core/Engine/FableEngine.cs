@@ -1,6 +1,5 @@
 ﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Engine.Commands;
-using Fablescript.Core.GameConfiguration;
 using Fablescript.Core.Prompts;
 using Fablescript.Utility.Services.CommandQuery;
 
@@ -9,10 +8,12 @@ namespace Fablescript.Core.Engine
   internal class FableEngine :
     IFableEngine,
     ICommandHandler<DescribeSceneCommand>,
-    ICommandHandler<ApplyUserInputCommand>
+    ICommandHandler<ApplyUserInputCommand>,
+    ICommandHandler<StartFableCommand>
   {
     #region Dependencies
 
+    private readonly IFableProvider FableProvider;
     private readonly IPlayerRepository PlayerRepository;
     private readonly ILocationProvider LocationProvider;
     private readonly IPromptRunner PromptRunner;
@@ -22,11 +23,13 @@ namespace Fablescript.Core.Engine
 
 
     public FableEngine(
+      IFableProvider fableProvider,
       IPlayerRepository playerRepository,
       ILocationProvider locationProvider,
       IPromptRunner promptRunner,
       IStructuredPromptRunner structuredPromptRunner)
     {
+      FableProvider = fableProvider;
       PlayerRepository = playerRepository;
       LocationProvider = locationProvider;
       PromptRunner = promptRunner;
@@ -79,6 +82,22 @@ namespace Fablescript.Core.Engine
     }
 
 
+    async Task ICommandHandler<StartFableCommand>.InvokeAsync(StartFableCommand cmd)
+    {
+      var playerId = new PlayerId("pl-" + Guid.NewGuid());
+      var fable = await FableProvider.GetAsync(cmd.FableId);
+
+      var player = new Player(
+        playerId,
+        cmd.FableId,
+        fable.InitialLocation);
+
+      await PlayerRepository.AddAsync(player);
+
+      cmd.CreatedPlayerId.Value = playerId;
+    }
+
+
     private async Task<string> DescribeScene(Location location)
     {
       var args = new
@@ -91,6 +110,7 @@ namespace Fablescript.Core.Engine
       var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
       return response;
     }
+
 
     public class PlayerIntent
     {

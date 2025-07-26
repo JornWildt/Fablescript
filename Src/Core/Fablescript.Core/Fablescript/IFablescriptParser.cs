@@ -5,7 +5,7 @@ namespace Fablescript.Core.Fablescript
 {
   internal interface IFablescriptParser
   {
-    FableDefinitionSet GetResult();
-    Task<LocationDefinition?> TryGetAsync(FableId fableId, LocationId locationId);
+    Task<FableDefinition> GetFableAsync(FableId fableId);
+    Task<LocationDefinition?> TryGetLocationAsync(FableId fableId, LocationId locationId);
   }
 }

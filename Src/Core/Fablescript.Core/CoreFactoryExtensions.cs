@@ -1,7 +1,6 @@
 ﻿using Fablescript.Core.Contract;
 using Fablescript.Core.Engine;
 using Fablescript.Core.Fablescript;
-using Fablescript.Core.GameConfiguration;
 using Fablescript.Core.LLM;
 using Fablescript.Core.OpenAI;
 using Fablescript.Core.Prompts;
@@ -21,8 +20,10 @@ namespace Fablescript.Core
       this IServiceCollection services,
       IConfiguration configuration)
     {
+      services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
+
       services.AddAllServiceInterfaces<FableEngine>(asSingleton: false);
-      services.AddSingleton<IGameProvider, GameProvider>();
+      services.AddSingleton<IFableProvider, FableProvider>();
       services.AddSingleton<ILocationProvider, LocationProvider>();
 
       var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FableScriptConfiguration>("Fablescript");

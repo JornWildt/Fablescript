@@ -3,9 +3,9 @@ using Fablescript.Core.Contract;
 using Fablescript.Utility.Services.CommandQuery;
 using Microsoft.Extensions.Logging;
 
-namespace Fablescript
+namespace Fablescript.Core
 {
-  internal class CoreCommandProcessor : CommandProcessor<CoreUnitOfWorkContext>
+  public class CoreCommandProcessor : CommandProcessor<CoreUnitOfWorkContext>
   {
     public CoreCommandProcessor(
       //IAuditService auditService,

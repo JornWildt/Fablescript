@@ -2,7 +2,7 @@
 using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Core.Fablescript;
 
-namespace Fablescript.Core.GameConfiguration
+namespace Fablescript.Core.Engine
 {
   internal class LocationProvider : ILocationProvider
   {
@@ -36,7 +36,7 @@ namespace Fablescript.Core.GameConfiguration
     
     private async Task<Location?> TryGetAsync(FableId fableId, LocationId locationId)
     {
-      var ldef = await FablescriptParser.TryGetAsync(fableId, locationId);
+      var ldef = await FablescriptParser.TryGetLocationAsync(fableId, locationId);
       if (ldef == null)
         return null;
 
