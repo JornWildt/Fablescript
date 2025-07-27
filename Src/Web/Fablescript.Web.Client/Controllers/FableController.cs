@@ -5,6 +5,8 @@ using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Core.Engine;
 using Fablescript.Utility.Services.CommandQuery;
 using Fablescript.Utility.Services.Contract.CommandQuery;
+using Fablescript.Web.Client.Models;
+using Fablescript.Web.Client.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,14 +17,17 @@ namespace Fablescript.Web.Client.Controllers
     #region Dependencies
 
     readonly ICommandProcessor CommandProcessor;
+    readonly ICurrentUser CurrentUser;
 
     #endregion
 
 
     public FableController(
-      ICommandProcessor commandProcessor)
+      ICommandProcessor commandProcessor,
+      ICurrentUser currentUser)
     {
       CommandProcessor = commandProcessor;
+      CurrentUser = currentUser;
     }
 
 
@@ -32,20 +37,20 @@ namespace Fablescript.Web.Client.Controllers
       var fableId = new FableId(id);
       await EnsureGameStarted(fableId);
 
-      var playerId = CurrentPlayerId(fableId)!;
+      var playerId = CurrentUser.CurrentPlayerId(fableId)!;
 
-      var describeCmd = new DescribeSceneCommand(playerId, new CommandOutput<string>());
-      await CommandProcessor.InvokeCommandAsync(describeCmd);
+      var model = new FableModel
+      {
+        FableId = id
+      };
 
-      var text = describeCmd.Answer.Value!;
-
-      return this.Content(text);
+      return View("ViewFable", model);
     }
 
     
     private async Task EnsureGameStarted(FableId fableId)
     {
-      var playerId = CurrentPlayerId(fableId);
+      var playerId = CurrentUser.CurrentPlayerId(fableId);
       if (playerId == null)
       {
         var startCmd = new StartFableCommand(
@@ -54,20 +59,8 @@ namespace Fablescript.Web.Client.Controllers
         await CommandProcessor.InvokeCommandAsync(startCmd);
 
         playerId = startCmd.CreatedPlayerId.Value!;
-        SetCurrentPlayerId(fableId, playerId);
+        CurrentUser.SetCurrentPlayerId(fableId, playerId);
       }
     }
-
-
-    private PlayerId? CurrentPlayerId(FableId fableId)
-    {
-      var id = HttpContext.Session.GetString(CurrentPlayerId_SessionKey(fableId));
-      return id == null ? null : new PlayerId(id);
-    }
-    
-    private void SetCurrentPlayerId(FableId fableId, PlayerId playerId) => HttpContext.Session.SetString(CurrentPlayerId_SessionKey(fableId), playerId.Value);
-
-
-    private string CurrentPlayerId_SessionKey(FableId fableId) => fableId + "_PlayerId";
   }
 }

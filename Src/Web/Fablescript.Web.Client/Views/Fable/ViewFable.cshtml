@@ -1,0 +1,66 @@
+﻿@model FableModel
+
+@{
+  ViewData["Title"] = Model.FableId;
+}
+
+<div id="fable-app"
+     @@vue:mounted="sendInitialDescribeCommand">
+  <div class="fable-output">
+    <div v-html="output" id="fable-output-list"></div>
+  </div>
+
+  <div class="fable-input">
+    <textarea v-model="command"></textarea>
+    <button v-on:click="sendUserCommand">Send</button>
+  </div>
+</div>
+
+<script type="module">
+  import { createApp } from '/lib/petite-vue/petite-vue.es.js'
+  import { marked } from '/lib/marked/marked.esm.js'
+
+  createApp({
+    command: "",
+    output: "",
+
+    async sendInitialDescribeCommand() {
+      const response = await this.sendCommand({ command: "###DESCRIBE", fableId: "@Model.FableId" });
+
+      this.output = marked.parse(response.message);
+      this.command = '';
+    },
+
+
+    async sendUserCommand() {
+      const input = this.command.trim();
+
+      if (input) {
+        const response = await this.sendCommand({ command: input, fableId: "@Model.FableId" });
+
+        this.output = marked.parse(response.message);
+        this.command = '';
+      }
+    },
+
+
+    async sendCommand(cmd) {
+      try {
+        const res = await fetch('/api/fable/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: "include",
+          body: JSON.stringify(cmd)
+        })
+
+        if (!res.ok)
+          throw new Error('Server error')
+
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        window.alert(err);
+      }
+    }
+  }).mount("#fable-app")
+</script>
