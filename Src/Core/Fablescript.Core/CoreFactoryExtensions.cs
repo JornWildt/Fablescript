@@ -57,6 +57,8 @@ namespace Fablescript.Core
       services.AddSingleton<ILLMGenerator, OpenAILLMGenerator>();
       services.AddSingleton<ILLMStructuredGenerator, LLMStructuredGenerator>();
 
+      services.AddVerifiedConfiguration<DeveloperConfiguration>(configuration, "Development");
+
       return services;
     }
   }

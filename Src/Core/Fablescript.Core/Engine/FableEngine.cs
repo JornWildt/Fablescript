@@ -18,6 +18,7 @@ namespace Fablescript.Core.Engine
     private readonly ILocationProvider LocationProvider;
     private readonly IPromptRunner PromptRunner;
     private readonly IStructuredPromptRunner StructuredPromptRunner;
+    private readonly DeveloperConfiguration DeveloperConfig;
 
     #endregion
 
@@ -27,13 +28,15 @@ namespace Fablescript.Core.Engine
       IPlayerRepository playerRepository,
       ILocationProvider locationProvider,
       IPromptRunner promptRunner,
-      IStructuredPromptRunner structuredPromptRunner)
+      IStructuredPromptRunner structuredPromptRunner,
+      DeveloperConfiguration developerConfig)
     {
       FableProvider = fableProvider;
       PlayerRepository = playerRepository;
       LocationProvider = locationProvider;
       PromptRunner = promptRunner;
       StructuredPromptRunner = structuredPromptRunner;
+      DeveloperConfig = developerConfig;
     }
 
 
@@ -50,6 +53,7 @@ namespace Fablescript.Core.Engine
     {
       var player = await PlayerRepository.GetAsync(cmd.PlayerId);
       var location = await LocationProvider.GetAsync(player.FableId, player.LocationId);
+
       var args = new
       {
         LocationName = location.LocationName,
@@ -100,15 +104,24 @@ namespace Fablescript.Core.Engine
 
     private async Task<string> DescribeScene(Location location)
     {
-      var args = new
+      if (!DeveloperConfig.SkipUseOfAI)
       {
-        LocationName = location.LocationName,
-        Introduction = location.Introduction,
-        Facts = location.Facts,
-        Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray()
-      };
-      var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
-      return response;
+        var args = new
+        {
+          LocationName = location.LocationName,
+          Introduction = location.Introduction,
+          Facts = location.Facts,
+          Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray()
+        };
+        var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
+        return response;
+      }
+      else
+      {
+        var facts = location.Facts.Aggregate("", (a, b) => a + "\n- " + b);
+        var exits = location.Exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ":" + b.Description);
+        return $"{location.Introduction}\n\n{facts}\n\nExits:\n{exits}";
+      }
     }
 
 
