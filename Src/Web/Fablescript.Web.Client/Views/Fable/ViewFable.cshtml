@@ -4,15 +4,18 @@
   ViewData["Title"] = Model.FableId;
 }
 
-<div id="fable-app"
-     @@vue:mounted="sendInitialDescribeCommand">
-  <div class="fable-output">
-    <div v-html="output" id="fable-output-list"></div>
-  </div>
+<div class="fable-app"
+     id="fable-app"
+     @@vue:mounted="initializeUI">
+  <div class="fable-dialogue-panel">
+    <div class="fable-output-area">
+      <div v-html="output" class="fable-output-content" id="fable_output_element"></div>
+    </div>
 
-  <div class="fable-input">
-    <textarea v-model="command"></textarea>
-    <button v-on:click="sendUserCommand">Send</button>
+    <div class="fable-input-area">
+      <textarea v-model="command" v-on:keydown="inputKeydownHandler" :disabled="isLoading" id="fable_input_textarea"></textarea>
+      <button v-on:click="sendUserCommand" :disabled="isLoading">Send</button>
+    </div>
   </div>
 </div>
 
@@ -22,13 +25,23 @@
 
   createApp({
     command: "",
-    output: "",
+    output: "Loading ...",
+    isLoading: false,
 
-    async sendInitialDescribeCommand() {
+    async initializeUI() {
       const response = await this.sendCommand({ command: "###DESCRIBE", fableId: "@Model.FableId" });
 
-      this.output = marked.parse(response.message);
+      this.output = "<div class='fade-in'>" + marked.parse(response.message) + "</div>";
       this.command = '';
+      document.getElementById('fable_input_textarea').focus();      
+    },
+
+
+    inputKeydownHandler(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        this.sendUserCommand();
+      }
     },
 
 
@@ -36,10 +49,17 @@
       const input = this.command.trim();
 
       if (input) {
+        this.isLoading = true;
+
         const response = await this.sendCommand({ command: input, fableId: "@Model.FableId" });
 
-        this.output = marked.parse(response.message);
+        this.output = "<div class='fade-in'>" + marked.parse(response.message) + "</div>";
         this.command = '';
+        this.isLoading = false;
+
+        setTimeout(() => {
+          document.getElementById('fable_input_textarea').focus();
+        }, 0);
       }
     },
 

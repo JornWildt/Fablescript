@@ -1,22 +1,88 @@
-html {
-  font-size: 14px;
+:root {
+  --glacier-blue: #A9C3CF;
+  --obsidian-black: #0B0B0D;
+  --bone-white: #FDFAF3;
+  --ash-gray: #878883;
+  --amber-ember: #D08C52;
+  --volcanic-slate: #3B3F42;
+  --ice-glass-blue: #CFE8F3;
+  --runestone-red: #703C3C;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
 
 html {
-  position: relative;
-  min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+  background-color: var(--glacier-blue);
+}
+
+
+.fable-app {
+  margin-top: 30px;
+}
+
+.fable-dialogue-panel {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  background-color: var(--bone-white);
+  color: var(--obsidian-black);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.fable-output-area {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+.fable-input-area {
+  display: flex;
+  border-top: 1px solid rgba(11, 11, 13, 0.1);
+  padding: 1rem;
+  background-color: var(--bone-white);
+}
+
+.fable-input-area textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid rgba(11, 11, 13, 0.2);
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: var(--bone-white);
+  color: var(--obsidian-black);
+}
+
+.fable-input-area button {
+  margin-left: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--amber-ember);
+  color: var(--bone-white);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.fable-input-area button:hover {
+  background-color: #b77440;
+}
+
+
+.fade-in {
+  animation: fadeIn 1.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
