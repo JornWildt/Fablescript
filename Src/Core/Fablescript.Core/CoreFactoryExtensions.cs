@@ -26,7 +26,7 @@ namespace Fablescript.Core
       services.AddSingleton<IFableProvider, FableProvider>();
       services.AddSingleton<ILocationProvider, LocationProvider>();
 
-      var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FableScriptConfiguration>("Fablescript");
+      var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FablescriptConfiguration>("Fablescript");
 
       services.AddSingleton<IFablescriptParser>(serviceProvider =>
       {

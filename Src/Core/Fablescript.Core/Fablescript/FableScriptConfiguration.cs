@@ -2,7 +2,7 @@
 
 namespace Fablescript.Core.Fablescript
 {
-  internal class FableScriptConfiguration
+  internal class FablescriptConfiguration
   {
     [Required]
     public string FableDirectory { get; set; } = null!;
