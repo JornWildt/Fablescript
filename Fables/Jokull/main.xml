@@ -4,7 +4,7 @@
        xsi:schemaLocation="https://fablescript.org/schema/core ../../Src/Core/Fablescript.Core/Fablescript/Fablescript.xsd">
   <Title>Jokull</Title>
   <Description>A story of ice and mystery.</Description>
-  <InitialLocation>BlackBeach</InitialLocation>
+  <InitialLocation>ToolSchack</InitialLocation>
   <Locations>
     <Location>
       <Name>BlackBeach</Name>
@@ -41,9 +41,9 @@
         <Fact>
           <Text>The beach stretches as far as you can see to the west.</Text>
         </Fact>
-        <Fact>
+        <!-- <Fact>
           <Text>Cliffs rises in the east.</Text>
-        </Fact>
+        </Fact> -->
         <Fact>
           <Text>Black sand covers all the beach.</Text>
         </Fact>
@@ -64,8 +64,74 @@
         <Exit>
           <Name>East</Name>
           <Title>East</Title>
+          <Description>The beach continous to the east</Description>
+          <TargetLocationName>IcebergLagoon</TargetLocationName>
+        </Exit>
+        <!-- <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
           <Description>A gentle slope leads uphill to the top of the cliffs.</Description>
           <TargetLocationName>Cliffs</TargetLocationName>
+        </Exit> -->
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>IcebergLagoon</Name>
+      <Title>Iceberg lagoon</Title>
+      <Facts>
+        <Fact>
+          <Text>At the shore of a lagoon full of icebergs. The water is black and quiet.</Text>
+        </Fact>
+        <Fact>
+          <Text>To the north a glacier tongue flows down from the distant glacier that tops the mountains.</Text>
+        </Fact>
+        <Fact>
+          <Text>A bridge can be seen to the east.</Text>
+        </Fact>
+        <Fact>
+          <Text>Something glimmer like diamonds on the beach to the south.</Text>
+        </Fact>
+        <Fact>
+          <Text>A small tool shack is located to the north.</Text>
+        </Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>West</Name>
+          <Title>West</Title>
+          <Description>The beach stretches to the west.</Description>
+          <TargetLocationName>BlackBeach</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>North</Name>
+          <Title>North</Title>
+          <Description>A small tool schack can be seen by the lagoon to the north.</Description>
+          <TargetLocationName>ToolSchack</TargetLocationName>
+        </Exit>
+        <!-- <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
+          <Description>Parts of an old road can be seen in the sand, leading to a bridge further east.</Description>
+          <TargetLocationName>Bridge</TargetLocationName>
+        </Exit> -->
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>ToolSchack</Name>
+      <Title>Old tool schack</Title>
+      <Facts>
+        <Fact>
+          <Text>Inside a tool shack. Light is dim but not completely dark. It smells of oil and old stuff.</Text>
+        </Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>South</Name>
+          <Title>South</Title>
+          <Description>A door to the south leads out of the tool schack.</Description>
+          <TargetLocationName>IcebergLagoon</TargetLocationName>
         </Exit>
       </Exits>
     </Location>
@@ -88,6 +154,9 @@
           <Text>At the edge of the cliffs a small Tervuun nests.</Text>
         </Fact>
         <Fact>
+          <Text>Tervuun are small birds with colored beaks. They nest on the cliffs and catches fish in the ocean.</Text>
+        </Fact>
+        <Fact>
           <Text>A smell of old fish fills the air.</Text>
         </Fact>
       </Facts>
@@ -101,4 +170,15 @@
       </Exits>
     </Location>
   </Locations>
+
+  <!-- OBJECTS -->
+
+  <Objects>
+    <Object>
+      <Name>LifeSavingRing</Name>
+      <Title>Life-saving ring</Title>
+      <Description>An old molded, once orange, life-saving ring with a rope attached to it.</Description>
+      <Location>ToolSchack</Location>
+    </Object>
+  </Objects>
 </Fable>

@@ -77,7 +77,13 @@ namespace Fablescript.Core.Fablescript
 
           foreach (var fable in fables.Values)
           {
-            fable.Initialize();
+            fable.Initialize(out var errors);
+            if (errors.Count > 0)
+            {
+              foreach (var error in errors)
+                Logger.LogError(error);
+              throw new ParserException($"Found {errors.Count} errors in fable '{fable.Title}'.");
+            }
           }
         }
       }

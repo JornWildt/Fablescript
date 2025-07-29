@@ -45,9 +45,18 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="Objects" type="m:ObjectsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Objects</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:all>
   </xs:complexType>
 
+  
+  <!-- === LOCATIONS === -->
 
   <xs:complexType name="LocationsType">
     <xs:annotation>
@@ -218,6 +227,69 @@
   </xs:complexType>
 
   
+  <!-- === OBJECTS === -->
+
+  <xs:complexType name="ObjectsType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>List of objects in the game.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Object" type="m:ObjectType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Single object.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="ObjectType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Definition of single object.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Name" type="m:IdentifierString" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of this object. Used for internal references.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Title" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Descriptive title for this object.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Description" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Description of the object.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Location" type="m:IdentifierString" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of initial location of this object.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+
   <xs:simpleType name="IdentifierString">
     <xs:restriction base="xs:string">
       <xs:pattern value="[a-zA-Z][a-zA-Z0-9_]+"/>

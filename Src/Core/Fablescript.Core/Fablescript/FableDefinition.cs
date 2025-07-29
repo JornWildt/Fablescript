@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using Fablescript.Core.Engine;
 
 namespace Fablescript.Core.Fablescript
 {
@@ -22,19 +23,38 @@ namespace Fablescript.Core.Fablescript
     public List<LocationDefinition> Locations { get; set; } = new List<LocationDefinition>();
 
 
+    [XmlArray("Objects")]
+    [XmlArrayItem("Object")]
+    public List<ObjectDefinition> Objects { get; set; } = new List<ObjectDefinition>();
+
+
 
     protected IDictionary<string,  LocationDefinition> LocationLookup { set; get; } = new Dictionary<string, LocationDefinition>();
 
 
-    public void Initialize()
+    public void Initialize(out List<string> errors)
     {
+      errors = new List<string>();
+
       foreach (var location in Locations)
       {
-        LocationLookup[location.Name] = location;
+        if (LocationLookup.ContainsKey(location.Name))
+          errors.Add($"Duplication location name '{location.Name}'.");
+        else
+          LocationLookup[location.Name] = location;
+      }
+
+      if (!LocationLookup.ContainsKey(InitialLocation))
+        errors.Add($"Initial player location '{InitialLocation}' does not match any known location.");
+
+      foreach (var obj in Objects)
+      {
+        if (obj.Location != null && !LocationLookup.ContainsKey(obj.Location))
+          errors.Add($"Object '{obj.Name}' location '{obj.Location}' does not match any known location.");
       }
     }
 
-    
+
     internal LocationDefinition? TryGetLocation(string locationName)
     {
       if (LocationLookup.TryGetValue(locationName, out var location))

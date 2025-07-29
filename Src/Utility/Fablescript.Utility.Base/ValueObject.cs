@@ -5,7 +5,7 @@
     protected static bool EqualOperator(ValueObject? left, ValueObject? right)
     {
       if (left is not null && right is not null)
-        return ReferenceEquals(left, right);
+        return left.Equals(right);
       else if (left is null && right is null)
         return true;
       else

@@ -7,6 +7,7 @@ namespace Fablescript.Core.Database.Engine
 {
   internal class PlayerRepository : IPlayerRepository
   {
+    // FIXME: Concurrency!
     private static IDictionary<PlayerId, Player> Players { get; }
 
     static PlayerRepository()

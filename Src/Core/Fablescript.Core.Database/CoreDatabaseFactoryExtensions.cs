@@ -14,6 +14,7 @@ namespace Fablescript.Core.Database
       AddBasicCorePersistence(services, configuration);
 
       services.AddScoped<IPlayerRepository, PlayerRepository>();
+      services.AddSingleton<IObjectRepository, ObjectRepository>();
 
       return services;
     }

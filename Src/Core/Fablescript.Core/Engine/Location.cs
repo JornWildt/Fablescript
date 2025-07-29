@@ -5,13 +5,13 @@ namespace Fablescript.Core.Engine
 {
   internal class Location : Entity<LocationId>
   {
-    public string Title { get; set; }
+    public string Title { get; private set; }
 
-    public string? Introduction { get; set; }
+    public string? Introduction { get; private set; }
     
-    public string[] Facts { get; set; }
+    public string[] Facts { get; private set; }
 
-    public Exit[] Exits { get; set; }
+    public Exit[] Exits { get; private set; }
 
 
     public Location(
@@ -31,10 +31,10 @@ namespace Fablescript.Core.Engine
 
     public class Exit
     {
-      public string Id { get; set; }
-      public string Name { get; set; }
-      public string? Description { get; set; }
-      public LocationId TargetLocationId { get; set; }
+      public string Id { get; private set; }
+      public string Name { get; private set; }
+      public string? Description { get; private set; }
+      public LocationId TargetLocationId { get; private set; }
 
       public Exit(string id, string name, string? description, LocationId targetLocationId)
       {

@@ -1,5 +1,7 @@
-﻿using Fablescript.Core.Contract.Engine;
+﻿using System.Linq;
+using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Engine.Commands;
+using Fablescript.Core.Fablescript;
 using Fablescript.Core.Prompts;
 using Fablescript.Utility.Services.CommandQuery;
 
@@ -13,8 +15,9 @@ namespace Fablescript.Core.Engine
   {
     #region Dependencies
 
-    private readonly IFableProvider FableProvider;
+    private readonly IFablescriptParser FablescriptParser;
     private readonly IPlayerRepository PlayerRepository;
+    private readonly IObjectRepository ObjectRepository;
     private readonly ILocationProvider LocationProvider;
     private readonly IPromptRunner PromptRunner;
     private readonly IStructuredPromptRunner StructuredPromptRunner;
@@ -24,15 +27,17 @@ namespace Fablescript.Core.Engine
 
 
     public FableEngine(
-      IFableProvider fableProvider,
+      IFablescriptParser fablescriptParser,
       IPlayerRepository playerRepository,
+      IObjectRepository objectRepository,
       ILocationProvider locationProvider,
       IPromptRunner promptRunner,
       IStructuredPromptRunner structuredPromptRunner,
       DeveloperConfiguration developerConfig)
     {
-      FableProvider = fableProvider;
+      FablescriptParser = fablescriptParser;
       PlayerRepository = playerRepository;
+      ObjectRepository = objectRepository;
       LocationProvider = locationProvider;
       PromptRunner = promptRunner;
       StructuredPromptRunner = structuredPromptRunner;
@@ -44,7 +49,7 @@ namespace Fablescript.Core.Engine
     {
       var player = await PlayerRepository.GetAsync(cmd.PlayerId);
       var location = await LocationProvider.GetAsync(player.FableId, player.LocationId);
-      var sceneDescription = await DescribeScene(location);
+      var sceneDescription = await DescribeScene(player.Id, location);
       cmd.Answer.Value = sceneDescription;
     }
 
@@ -75,7 +80,7 @@ namespace Fablescript.Core.Engine
           {
             player.LocationId = newLocation.Id;
             
-            var sceneDescription = await DescribeScene(newLocation);
+            var sceneDescription = await DescribeScene(player.Id, newLocation);
             cmd.Answer.Value = sceneDescription;
             return;
           }
@@ -90,21 +95,41 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<StartFableCommand>.InvokeAsync(StartFableCommand cmd)
     {
       var playerId = new PlayerId("pl-" + Guid.NewGuid());
-      var fable = await FableProvider.GetAsync(cmd.FableId);
+      var fable = await FablescriptParser.GetFableAsync(cmd.FableId);
+      var initialLocation = new LocationId(fable.InitialLocation);
 
       var player = new Player(
         playerId,
         cmd.FableId,
-        fable.InitialLocation);
+        initialLocation);
 
       await PlayerRepository.AddAsync(player);
+
+      foreach (var objDef in fable.Objects)
+      {
+        var obj = new Object(
+          new ObjectId(Guid.NewGuid()),
+          playerId,
+          objDef.Name,
+          objDef.Title,
+          objDef.Description,
+          objDef.Location == null ? null : new LocationId(objDef.Location));
+
+        await ObjectRepository.AddAsync(obj);
+      }
 
       cmd.CreatedPlayerId.Value = playerId;
     }
 
 
-    private async Task<string> DescribeScene(Location location)
+    private async Task<string> DescribeScene(
+      PlayerId playerId,
+      Location location)
     {
+      var objectsHere = (await ObjectRepository.GetAllObjectsAsync(playerId))
+        .Where(o => o.Location == location.Id)
+        .ToArray();
+
       if (!DeveloperConfig.SkipUseOfAI)
       {
         var args = new
@@ -113,7 +138,8 @@ namespace Fablescript.Core.Engine
           LocationName = location.Id.Value,
           Introduction = location.Introduction,
           Facts = location.Facts,
-          Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray()
+          Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray(),
+          Objects = objectsHere.Select(o => new { Id = o.Id, Name = o.Name, Description = o.Description }).ToArray()
         };
         var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
         return response;
@@ -122,7 +148,8 @@ namespace Fablescript.Core.Engine
       {
         var facts = location.Facts.Aggregate("", (a, b) => a + "\n- " + b);
         var exits = location.Exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
-        return $"### {location.Title}\n{location.Introduction}\n\n{facts}\n\nExits:\n{exits}";
+        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
+        return $"### {location.Title}\n{location.Introduction}\n\n{facts}\n\nExits:\n{exits}\n\nObjects:\n{objects}";
       }
     }
 
