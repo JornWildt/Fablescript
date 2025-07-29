@@ -56,7 +56,8 @@ namespace Fablescript.Core.Engine
 
       var args = new
       {
-        LocationName = location.LocationName,
+        LocationName = location.Id.Value,
+        Title = location.Title,
         Introduction = location.Introduction,
         Facts = location.Facts,
         Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray(),
@@ -108,7 +109,8 @@ namespace Fablescript.Core.Engine
       {
         var args = new
         {
-          LocationName = location.LocationName,
+          Title = location.Title,
+          LocationName = location.Id.Value,
           Introduction = location.Introduction,
           Facts = location.Facts,
           Exits = location.Exits.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray()
@@ -119,8 +121,8 @@ namespace Fablescript.Core.Engine
       else
       {
         var facts = location.Facts.Aggregate("", (a, b) => a + "\n- " + b);
-        var exits = location.Exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ":" + b.Description);
-        return $"{location.Introduction}\n\n{facts}\n\nExits:\n{exits}";
+        var exits = location.Exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
+        return $"### {location.Title}\n{location.Introduction}\n\n{facts}\n\nExits:\n{exits}";
       }
     }
 

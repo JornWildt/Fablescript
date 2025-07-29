@@ -5,7 +5,7 @@ namespace Fablescript.Core.Engine
 {
   internal class Location : Entity<LocationId>
   {
-    public string LocationName { get; set; }
+    public string Title { get; set; }
 
     public string? Introduction { get; set; }
     
@@ -16,13 +16,13 @@ namespace Fablescript.Core.Engine
 
     public Location(
       LocationId id,
-      string locationName,
+      string title,
       string? introduction,
       string[] facts,
       Exit[] exits)
       : base(id)
     {
-      LocationName = locationName;
+      Title = title;
       Introduction = introduction;
       Facts = facts;
       Exits = exits;
