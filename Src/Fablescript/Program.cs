@@ -56,7 +56,7 @@ namespace Fablescript
 
       public async Task Run()
       {
-        var startCmd = new StartFableCommand(
+        var startCmd = new StartGameCommand(
           new FableId("Jokull"),
           new CommandOutput<Core.Contract.Engine.GameId>());
 

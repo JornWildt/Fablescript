@@ -5,26 +5,40 @@ using Fablescript.Utility.Base.Persistence;
 
 namespace Fablescript.Core.Engine
 {
-  internal class GameState : Entity<GameId>
+  public class GameState : Entity<GameId>
   {
     public FableId FableId { get; private set; }
 
     public Player Player { get; private set; }
 
 
-    private IDictionary<ObjectId, Object> Objects { get; }
+    private IDictionary<ObjectId, FableObject> Objects { get; }
 
 
     public GameState(
       GameId id,
       FableId fableId,
-      Player player)
+      Player player,
+      IReadOnlyCollection<FableObject> objects)
       : base(id)
     {
       FableId = fableId;
       Player = player;
 
-      Objects = new ConcurrentDictionary<ObjectId, Object>();
+      Objects = new ConcurrentDictionary<ObjectId, FableObject>(
+        objects.Select(o => KeyValuePair.Create(o.Id, o)));
+    }
+
+
+    public Task<FableObject> GetObjectAsync(ObjectId id)
+    {
+      return Task.FromResult(Objects[id]);
+    }
+
+
+    public Task<IEnumerable<dynamic>> GetAllObjectsAsync()
+    {
+      return Task.FromResult(Objects.Values.Cast<dynamic>().AsEnumerable());
     }
   }
 }

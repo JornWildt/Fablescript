@@ -1,11 +1,10 @@
-﻿using System.Collections.Concurrent;
-using System.Xml;
-using System.Xml.Serialization;
-using Fablescript.Core.Contract.Engine;
-using Fablescript.Core.Contract.Fablescript;
+﻿using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base;
 using Fablescript.Utility.Base.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Fablescript.Core.Fablescript
 {
@@ -28,13 +27,6 @@ namespace Fablescript.Core.Fablescript
     {
       var fable = GetCache()[fableId.Value];
       return Task.FromResult(fable);
-    }
-
-
-    Task<LocationDefinition?> IFablescriptParser.TryGetLocationAsync(FableId fableId, LocationId locationId)
-    {
-      var fable = GetCache()[fableId.Value];
-      return Task.FromResult(fable.TryGetLocation(locationId.Value));
     }
 
     #endregion

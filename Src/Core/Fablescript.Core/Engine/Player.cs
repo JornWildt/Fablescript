@@ -2,10 +2,10 @@
 {
   public class Player
   {
-    public LocationId LocationId { get; set; }
+    public ObjectId LocationId { get; set; }
 
     public Player(
-      LocationId locationId)
+      ObjectId locationId)
     {
       LocationId = locationId;
     }

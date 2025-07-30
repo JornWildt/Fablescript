@@ -23,7 +23,6 @@ namespace Fablescript.Core
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
 
       services.AddAllServiceInterfaces<FableEngine>(asSingleton: false);
-      services.AddSingleton<ILocationProvider, LocationProvider>();
 
       var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FablescriptConfiguration>("Fablescript");
 

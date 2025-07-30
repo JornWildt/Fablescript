@@ -53,7 +53,7 @@ namespace Fablescript.Web.Client.Controllers
       var gameId = CurrentUser.CurrentGameId(fableId);
       if (gameId == null)
       {
-        var startCmd = new StartFableCommand(
+        var startCmd = new StartGameCommand(
           fableId,
           new CommandOutput<GameId>());
         await CommandProcessor.InvokeCommandAsync(startCmd);
