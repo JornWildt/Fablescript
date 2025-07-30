@@ -5,19 +5,29 @@ You are an intent parser for a text adventure game. Interpret what the player is
 
 Location Name: $args.LocationName$
 
+$if(args.HasFacts)$
 Facts:
 $args.Facts: {f | - $f$
 }$
+$endif$
 
+$if(args.HasExits)$
 Exits:
-$args.Exits: {x | - $x.Name$[exit_id:$x.Id$]: $x.Description$
+$args.Exits: {x | - $x.Title$[exit_name:$x.Name$]: $x.Description$
 }$
+$endif$
+
+$if(args.HasObjects)$
+Objects here:
+$args.Objects: {o | - $o.Name$: $o.Description$
+}$
+$endif$
 
 Player input: $args.PlayerInput$
 
 Respond with a JSON object like:
 {
   "intent": "move" | "other",
-  "move_exit_id": string | null
+  "move_exit_name": string | null
 }
 >>

@@ -8,17 +8,23 @@ The general theme of the description should be one of desolation, mystic and anc
 
 Introduction: $args.Introduction$
 
+$if(args.HasFacts)$
 Facts:
 $args.Facts: {f | - $f$
 }$
+$endif$
 
+$if(args.HasExits)$
 Exits:
-$args.Exits: {x | - $x.Name$: $x.Description$
+$args.Exits: {x | - $x.Title$: $x.Description$
 }$
+$endif$
 
+$if(args.HasObjects)$
 Objects here:
 $args.Objects: {o | - $o.Name$: $o.Description$
 }$
+$endif$
 
 The player has just arrived. Set the mood and atmosphere, include objects here, and then describe the exits.
 >>

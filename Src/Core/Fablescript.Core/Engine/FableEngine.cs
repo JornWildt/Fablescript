@@ -107,32 +107,43 @@ namespace Fablescript.Core.Engine
       var game = await GameStateRepository.GetAsync(cmd.GameId);
       dynamic location = await game.GetObjectAsync(game.Player.LocationId);
 
+      dynamic[] objectsHere = (await game.GetAllObjectsAsync())
+        .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
+        .ToArray();
+
+      var facts = (List<Fact>)location.Facts;
+      var exits = (List<Exit>)location.Exits;
+
       var args = new
       {
         Title = (string)location.Title,
         Introduction = (string)location.Introduction,
-        Facts = Array.Empty<string>(), //location.Facts,
-        Exits = Array.Empty<object>(), //.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray(),
+        HasFacts = facts.Count > 0,
+        Exits = exits.Select(x => new { Name = x.Name, Title = x.Title, Description = x.Description }).ToArray(),
+        HasExits = exits.Count > 0,
+        Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray(),
+        HasObjects = objectsHere.Length > 0,
         PlayerInput = cmd.PlayerInput
       };
       var response = await StructuredPromptRunner.RunPromptAsync<PlayerIntent>("DecodeUserIntent", args);
 
-      //if (response.intent == "move" && response.move_exit_id != null)
-      //{
-      //  var exit = location.Exits.FirstOrDefault(x => x.Id == response.move_exit_id);
-      //  if (exit != null)
-      //  {
-      //    var newLocation = await LocationProvider.TryGetAsync(player.FableId, exit.TargetLocationId);
-      //    if (newLocation != null)
-      //    {
-      //      player.LocationId = newLocation.Id;
-            
-      //      var sceneDescription = await DescribeScene(player.Id, newLocation);
-      //      cmd.Answer.Value = sceneDescription;
-      //      return;
-      //    }
-      //  }
-      //}
+      if (response.intent == "move" && response.move_exit_name != null)
+      {
+        var exit = exits.FirstOrDefault(x => x.Name == response.move_exit_name);
+        if (exit != null)
+        {
+          var newLocationId = exit.TargetLocationId;
+          dynamic newLocation = await game.GetObjectAsync(newLocationId);
+          if (newLocation != null)
+          {
+            game.Player.LocationId = newLocationId;
+
+            var sceneDescription = await DescribeScene(game, newLocation);
+            cmd.Answer.Value = sceneDescription;
+            return;
+          }
+        }
+      }
 
       var idleResponse = await PromptRunner.RunPromptAsync("IdleUserInputResponse", args);
       cmd.Answer.Value += idleResponse;
@@ -147,25 +158,31 @@ namespace Fablescript.Core.Engine
         .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
         .ToArray();
 
+      var facts = (List<Fact>)location.Facts;
+      var exits = (List<Exit>)location.Exits;
+
       if (!DeveloperConfig.SkipUseOfAI)
       {
         var args = new
         {
           Title = (string)location.Title,
           Introduction = (string)location.Introduction,
-          Facts = (List<Fact>)location.Facts,
-          Exits = Array.Empty<object>(), //.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray(),
-          Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray()
+          Facts = facts.Select(f => f.Text).ToArray(),
+          HasFacts = facts.Count > 0,
+          Exits = exits.Select(x => new { Name = x.Name, Description = x.Description }).ToArray(),
+          HasExits = exits.Count > 0,
+          Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray(),
+          HasObjects = objectsHere.Length > 0
         };
         var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
         return response;
       }
       else
       {
-        var facts = ((List<Fact>)location.Facts).Aggregate("", (a, b) => a + "\n- " + b.Text);
-        var exits = ((List<Exit>)location.Exits).Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
+        var factText = facts.Aggregate("", (a, b) => a + "\n- " + b.Text);
+        var exitText = exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
         var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + (string)b.Title + ": " + (string)b.Description);
-        return $"### {location.Title}\n{location.Introduction}\n\nFacts:\n{facts}\n\nExits:\n{exits}\n\nObjects:\n{objects}";
+        return $"### {location.Title}\n{location.Introduction}\n\nFacts:\n{factText}\n\nExits:\n{exitText}\n\nObjects:\n{objects}";
       }
     }
 
@@ -191,7 +208,7 @@ namespace Fablescript.Core.Engine
     public class PlayerIntent
     {
       public string? intent { get; set; }
-      public string? move_exit_id { get; set; }
+      public string? move_exit_name { get; set; }
     }
   }
 
