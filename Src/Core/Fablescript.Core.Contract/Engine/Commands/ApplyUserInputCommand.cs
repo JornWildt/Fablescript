@@ -3,7 +3,7 @@
 namespace Fablescript.Core.Contract.Engine.Commands
 {
   public record ApplyUserInputCommand(
-    PlayerId PlayerId,
+    GameId GameId,
     string PlayerInput,
     CommandOutput<string> Answer) : ICommand
   {

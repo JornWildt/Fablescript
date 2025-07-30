@@ -50,19 +50,19 @@ namespace Fablescript.Web.Client.Controllers
         return BadRequest("fableId is required.");
       }
 
-      var playerId = CurrentUser.CurrentPlayerId(new FableId(request.fableId));
-      if (playerId != null)
+      var gameId = CurrentUser.CurrentGameId(new FableId(request.fableId));
+      if (gameId != null)
       {
         if (request.command == "###DESCRIBE")
         {
-          var describeCmd = new DescribeSceneCommand(playerId, new CommandOutput<string>());
+          var describeCmd = new DescribeSceneCommand(gameId, new CommandOutput<string>());
           await CommandProcessor.InvokeCommandAsync(describeCmd);
 
           return Ok(new { message = describeCmd.Answer.Value });
         }
         else
         {
-          var applyCmd = new ApplyUserInputCommand(playerId, request.command, new CommandOutput<string>());
+          var applyCmd = new ApplyUserInputCommand(gameId, request.command, new CommandOutput<string>());
           await CommandProcessor.InvokeCommandAsync(applyCmd);
 
           return Ok(new { message = applyCmd.Answer.Value });

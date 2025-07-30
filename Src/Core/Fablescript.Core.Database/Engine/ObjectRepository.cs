@@ -11,18 +11,18 @@ namespace Fablescript.Core.Database.Engine
   {
     // FIXME: Concurrency!
     private static IDictionary<ObjectId, Object> Objects { get; }
-    private static IDictionary<PlayerId, IList<Object>> PlayerObjects { get; }
+    private static IDictionary<GameId, IList<Object>> PlayerObjects { get; }
 
     static ObjectRepository()
     {
       // FIXME: Use persistent database
       Objects = new ConcurrentDictionary<ObjectId, Object>();
-      PlayerObjects = new ConcurrentDictionary<PlayerId, IList<Object>>();
+      PlayerObjects = new ConcurrentDictionary<GameId, IList<Object>>();
     }
 
-    Task<IReadOnlyList<Object>> IObjectRepository.GetAllObjectsAsync(PlayerId playerId)
+    Task<IReadOnlyList<Object>> IObjectRepository.GetAllObjectsAsync(GameId gameId)
     {
-      if (!PlayerObjects.TryGetValue(playerId, out var objList))
+      if (!PlayerObjects.TryGetValue(gameId, out var objList))
       {
         objList = new List<Object>();
       }
@@ -38,10 +38,10 @@ namespace Fablescript.Core.Database.Engine
     Task IRepository<Core.Engine.Object, ObjectId>.AddAsync(Core.Engine.Object obj)
     {
       Objects.TryAdd(obj.Id, obj);
-      if (!PlayerObjects.TryGetValue(obj.PlayerId, out var objList))
+      if (!PlayerObjects.TryGetValue(obj.GameId, out var objList))
       {
         objList = new List<Object>();
-        PlayerObjects.TryAdd(obj.PlayerId, objList);
+        PlayerObjects.TryAdd(obj.GameId, objList);
       }
       objList.Add(obj);
       return Task.CompletedTask;

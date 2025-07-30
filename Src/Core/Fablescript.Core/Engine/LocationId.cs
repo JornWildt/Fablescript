@@ -1,6 +1,6 @@
 ﻿using Fablescript.Utility.Base;
 
-namespace Fablescript.Core.Contract.Engine
+namespace Fablescript.Core.Engine
 {
   public class LocationId : EntityId<string>
   {

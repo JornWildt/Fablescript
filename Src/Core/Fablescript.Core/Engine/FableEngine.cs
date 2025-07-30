@@ -8,7 +8,6 @@ using Fablescript.Utility.Services.CommandQuery;
 namespace Fablescript.Core.Engine
 {
   internal class FableEngine :
-    IFableEngine,
     ICommandHandler<DescribeSceneCommand>,
     ICommandHandler<ApplyUserInputCommand>,
     ICommandHandler<StartFableCommand>
@@ -47,7 +46,7 @@ namespace Fablescript.Core.Engine
 
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
-      var player = await PlayerRepository.GetAsync(cmd.PlayerId);
+      var player = await PlayerRepository.GetAsync(cmd.GameId);
       var location = await LocationProvider.GetAsync(player.FableId, player.LocationId);
       var sceneDescription = await DescribeScene(player.Id, location);
       cmd.Answer.Value = sceneDescription;
@@ -56,7 +55,7 @@ namespace Fablescript.Core.Engine
 
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
-      var player = await PlayerRepository.GetAsync(cmd.PlayerId);
+      var player = await PlayerRepository.GetAsync(cmd.GameId);
       var location = await LocationProvider.GetAsync(player.FableId, player.LocationId);
 
       var args = new
@@ -94,12 +93,12 @@ namespace Fablescript.Core.Engine
 
     async Task ICommandHandler<StartFableCommand>.InvokeAsync(StartFableCommand cmd)
     {
-      var playerId = new PlayerId("pl-" + Guid.NewGuid());
+      var gameId = new GameId(Guid.NewGuid());
       var fable = await FablescriptParser.GetFableAsync(cmd.FableId);
       var initialLocation = new LocationId(fable.InitialLocation);
 
       var player = new Player(
-        playerId,
+        gameId,
         cmd.FableId,
         initialLocation);
 
@@ -109,7 +108,7 @@ namespace Fablescript.Core.Engine
       {
         var obj = new Object(
           new ObjectId(Guid.NewGuid()),
-          playerId,
+          gameId,
           objDef.Name,
           objDef.Title,
           objDef.Description,
@@ -118,15 +117,15 @@ namespace Fablescript.Core.Engine
         await ObjectRepository.AddAsync(obj);
       }
 
-      cmd.CreatedPlayerId.Value = playerId;
+      cmd.CreatedGameId.Value = gameId;
     }
 
 
     private async Task<string> DescribeScene(
-      PlayerId playerId,
+      GameId gameId,
       Location location)
     {
-      var objectsHere = (await ObjectRepository.GetAllObjectsAsync(playerId))
+      var objectsHere = (await ObjectRepository.GetAllObjectsAsync(gameId))
         .Where(o => o.Location == location.Id)
         .ToArray();
 

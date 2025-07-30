@@ -37,7 +37,7 @@ namespace Fablescript.Web.Client.Controllers
       var fableId = new FableId(id);
       await EnsureGameStarted(fableId);
 
-      var playerId = CurrentUser.CurrentPlayerId(fableId)!;
+      var gameId = CurrentUser.CurrentGameId(fableId)!;
 
       var model = new FableModel
       {
@@ -50,16 +50,16 @@ namespace Fablescript.Web.Client.Controllers
     
     private async Task EnsureGameStarted(FableId fableId)
     {
-      var playerId = CurrentUser.CurrentPlayerId(fableId);
-      if (playerId == null)
+      var gameId = CurrentUser.CurrentGameId(fableId);
+      if (gameId == null)
       {
         var startCmd = new StartFableCommand(
           fableId,
-          new CommandOutput<PlayerId>());
+          new CommandOutput<GameId>());
         await CommandProcessor.InvokeCommandAsync(startCmd);
 
-        playerId = startCmd.CreatedPlayerId.Value!;
-        CurrentUser.SetCurrentPlayerId(fableId, playerId);
+        gameId = startCmd.CreatedGameId.Value!;
+        CurrentUser.SetCurrentGameId(fableId, gameId);
       }
     }
   }

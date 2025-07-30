@@ -5,7 +5,7 @@ namespace Fablescript.Web.Client.Utilities
 {
   public interface ICurrentUser
   {
-    PlayerId? CurrentPlayerId(FableId fableId);
-    void SetCurrentPlayerId(FableId fableId, PlayerId playerId);
+    GameId? CurrentGameId(FableId fableId);
+    void SetCurrentGameId(FableId fableId, GameId gameId);
   }
 }

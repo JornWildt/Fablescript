@@ -8,64 +8,64 @@ namespace Fablescript.Core.Database.Engine
   internal class PlayerRepository : IPlayerRepository
   {
     // FIXME: Concurrency!
-    private static IDictionary<PlayerId, Player> Players { get; }
+    private static IDictionary<GameId, Player> Players { get; }
 
     static PlayerRepository()
     {
       // FIXME: Use persistent database
-      Players = new ConcurrentDictionary<PlayerId, Player>();
+      Players = new ConcurrentDictionary<GameId, Player>();
     }
 
 
-    void IRepository<Player, PlayerId>.Add(Player entity)
+    void IRepository<Player, GameId>.Add(Player entity)
     {
       throw new NotImplementedException();
     }
 
-    Task IRepository<Player, PlayerId>.AddAsync(Player player)
+    Task IRepository<Player, GameId>.AddAsync(Player player)
     {
       Players.TryAdd(player.Id, player);
       return Task.CompletedTask;
     }
 
-    Player IRepository<Player, PlayerId>.Get(PlayerId id)
+    Player IRepository<Player, GameId>.Get(GameId id)
     {
       throw new NotImplementedException();
     }
 
-    IReadOnlyList<Player> IRepository<Player, PlayerId>.GetAll()
+    IReadOnlyList<Player> IRepository<Player, GameId>.GetAll()
     {
       throw new NotImplementedException();
     }
 
-    Task<IReadOnlyList<Player>> IRepository<Player, PlayerId>.GetAllAsync()
+    Task<IReadOnlyList<Player>> IRepository<Player, GameId>.GetAllAsync()
     {
       throw new NotImplementedException();
     }
 
-    Task<Player> IRepository<Player, PlayerId>.GetAsync(PlayerId id)
+    Task<Player> IRepository<Player, GameId>.GetAsync(GameId id)
     {
       var player = Players[id];
 
       return Task.FromResult(player);
     }
 
-    void IRepository<Player, PlayerId>.Remove(PlayerId id)
+    void IRepository<Player, GameId>.Remove(GameId id)
     {
       throw new NotImplementedException();
     }
 
-    Task IRepository<Player, PlayerId>.RemoveAsync(PlayerId id)
+    Task IRepository<Player, GameId>.RemoveAsync(GameId id)
     {
       throw new NotImplementedException();
     }
 
-    bool IRepository<Player, PlayerId>.TryGet(PlayerId id, out Player entity)
+    bool IRepository<Player, GameId>.TryGet(GameId id, out Player entity)
     {
       throw new NotImplementedException();
     }
 
-    Task<(bool Success, Player? Entity)> IRepository<Player, PlayerId>.TryGetAsync(PlayerId id)
+    Task<(bool Success, Player? Entity)> IRepository<Player, GameId>.TryGetAsync(GameId id)
     {
       throw new NotImplementedException();
     }

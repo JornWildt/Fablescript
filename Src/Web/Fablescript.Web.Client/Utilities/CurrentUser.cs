@@ -18,25 +18,25 @@ namespace Fablescript.Web.Client.Utilities
     }
 
 
-    PlayerId? ICurrentUser.CurrentPlayerId(FableId fableId)
+    GameId? ICurrentUser.CurrentGameId(FableId fableId)
     {
       if (HttpContextAccessor.HttpContext?.Session == null)
         throw new NotImplementedException();
 
-      var id = HttpContextAccessor.HttpContext.Session.GetString(CurrentPlayerId_SessionKey(fableId));
-      return id == null ? null : new PlayerId(id);
+      var id = HttpContextAccessor.HttpContext.Session.GetString(CurrentGameId_SessionKey(fableId));
+      return id == null ? null : new GameId(new Guid(id));
     }
 
     
-    void ICurrentUser.SetCurrentPlayerId(FableId fableId, PlayerId playerId)
+    void ICurrentUser.SetCurrentGameId(FableId fableId, GameId gameId)
     {
       if (HttpContextAccessor.HttpContext?.Session == null)
         throw new NotImplementedException();
 
-      HttpContextAccessor.HttpContext.Session.SetString(CurrentPlayerId_SessionKey(fableId), playerId.Value);
+      HttpContextAccessor.HttpContext.Session.SetString(CurrentGameId_SessionKey(fableId), gameId.Value.ToString());
     }
     
 
-    private string CurrentPlayerId_SessionKey(FableId fableId) => fableId + "_PlayerId";
+    private string CurrentGameId_SessionKey(FableId fableId) => fableId + "_GameId";
   }
 }

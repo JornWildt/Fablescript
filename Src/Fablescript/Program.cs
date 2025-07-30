@@ -58,12 +58,12 @@ namespace Fablescript
       {
         var startCmd = new StartFableCommand(
           new FableId("Jokull"),
-          new CommandOutput<Core.Contract.Engine.PlayerId>());
+          new CommandOutput<Core.Contract.Engine.GameId>());
 
         await CommandProcessor.InvokeCommandAsync(startCmd);
-        var playerId = startCmd.CreatedPlayerId.Value!;
+        var gameId = startCmd.CreatedGameId.Value!;
 
-        var describeCmd = new DescribeSceneCommand(playerId, new CommandOutput<string>());
+        var describeCmd = new DescribeSceneCommand(gameId, new CommandOutput<string>());
         await CommandProcessor.InvokeCommandAsync(describeCmd);
 
         Console.WriteLine(describeCmd.Answer.Value);
@@ -73,7 +73,7 @@ namespace Fablescript
           var input = Console.ReadLine();
           if (input != null)
           {
-            var applyCmd = new ApplyUserInputCommand(playerId, input, new CommandOutput<string>());
+            var applyCmd = new ApplyUserInputCommand(gameId, input, new CommandOutput<string>());
             await CommandProcessor.InvokeCommandAsync(applyCmd);
 
             Console.WriteLine(applyCmd.Answer.Value);
