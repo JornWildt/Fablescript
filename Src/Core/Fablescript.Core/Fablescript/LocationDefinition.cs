@@ -15,10 +15,10 @@ namespace Fablescript.Core.Fablescript
 
     [XmlArray("Facts")]
     [XmlArrayItem("Fact")]
-    public LocationFactDefinition[]? Facts { get; set; }
+    public LocationFactDefinition[] Facts { get; set; } = new LocationFactDefinition[0];
 
     [XmlArray("Exits")]
     [XmlArrayItem("Exit")]
-    public LocationExitDefinition[]? Exits { get; set; }
+    public LocationExitDefinition[] Exits { get; set; } = new LocationExitDefinition[0];
   }
 }

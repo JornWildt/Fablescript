@@ -46,22 +46,31 @@ namespace Fablescript.Core.Engine
       var objectNameMapping = new Dictionary<string, FableObject>();
       var locationNameMapping = new Dictionary<string, FableObject>();
 
+      var locationIdMapping = new Dictionary<string, ObjectId>();
+      foreach (var locDef in fable.Locations)
+        locationIdMapping[locDef.Name] = new ObjectId(Guid.NewGuid());
+
       foreach (var objDef in fable.Objects)
       {
         dynamic obj = new FableObject(new ObjectId(Guid.NewGuid()), gameId);
         obj.Name = objDef.Name;
         obj.Title = objDef.Title;
         obj.Description = objDef.Description;
+        if (objDef.Location != null)
+          obj.Location = locationIdMapping[objDef.Location];
 
         objectNameMapping[objDef.Name] = obj;
       }
 
       foreach (var locDef in fable.Locations)
       {
-        dynamic loc = new FableObject(new ObjectId(Guid.NewGuid()), gameId);
+        dynamic loc = new FableObject(locationIdMapping[locDef.Name], gameId);
         loc.Name = locDef.Name;
         loc.Title = locDef.Title;
         loc.Introduction = locDef.Introduction;
+
+        loc.Facts = locDef.Facts.Select(Fact2FableObject).ToList();
+        loc.Exits = locDef.Exits.Select(x => Exit2FableObject(x, locationIdMapping[x.TargetLocationName])).ToList();
 
         objectNameMapping[locDef.Name] = loc;
         locationNameMapping[locDef.Name] = loc;
@@ -144,20 +153,38 @@ namespace Fablescript.Core.Engine
         {
           Title = (string)location.Title,
           Introduction = (string)location.Introduction,
-          Facts = Array.Empty<string>(), //location.Facts,
+          Facts = (List<Fact>)location.Facts,
           Exits = Array.Empty<object>(), //.Select(x => new { Id = x.Id, Name = x.Name, Description = x.Description }).ToArray(),
-          Objects = objectsHere.Select(o => new { Id = o.Id, Name = o.Name, Description = o.Description }).ToArray()
+          Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray()
         };
         var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
         return response;
       }
       else
       {
-        var facts = "none"; // location.Facts.Aggregate("", (a, b) => a + "\n- " + b);
-        var exits = "none"; // location.Exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
-        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
+        var facts = ((List<Fact>)location.Facts).Aggregate("", (a, b) => a + "\n- " + b.Text);
+        var exits = ((List<Exit>)location.Exits).Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
+        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + (string)b.Title + ": " + (string)b.Description);
         return $"### {location.Title}\n{location.Introduction}\n\nFacts:\n{facts}\n\nExits:\n{exits}\n\nObjects:\n{objects}";
       }
+    }
+
+
+    private Fact Fact2FableObject(LocationFactDefinition fact)
+    {
+      return new Fact(fact.Text);
+    }
+
+
+    private Exit Exit2FableObject(
+      LocationExitDefinition x,
+      ObjectId targetId)
+    {
+      return new Exit(
+        x.Name,
+        x.Title,
+        x.Description,
+        targetId);
     }
 
 
@@ -165,6 +192,33 @@ namespace Fablescript.Core.Engine
     {
       public string? intent { get; set; }
       public string? move_exit_id { get; set; }
+    }
+  }
+
+
+  public class Fact
+  {
+    public string Text { get; set; }
+    
+    public Fact(string text)
+    {
+      Text = text;
+    }
+  }
+
+  public class Exit
+  {
+    public string Name { get; set; }
+    public string Title { get; set; }
+    public string? Description { get; set; }
+    public ObjectId TargetLocationId { get; set; }
+    
+    public Exit(string name, string title, string? description, ObjectId targetLocationId)
+    {
+      Name = name;
+      Title = title;
+      Description = description;
+      TargetLocationId = targetLocationId;
     }
   }
 }
