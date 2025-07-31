@@ -61,6 +61,8 @@ namespace Fablescript.Core.Engine
         cmd.FableId,
         player);
 
+      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
+      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Core.lua"));
       gameState.Initialize();
 
@@ -111,7 +113,7 @@ namespace Fablescript.Core.Engine
       var game = await GameStateRepository.GetAsync(cmd.GameId);
       LuaObject location = game.GetObject(game.Player.LocationId);
 
-      game.InvokeFunction("Commands.inspect", location.Source);
+      game.InvokeMethod(location.Source, "inspect");
 
 #if false
       string locationId = location.Id;

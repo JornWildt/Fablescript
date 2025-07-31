@@ -10,6 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Core\Core.lua" />
+    <None Include="$(MSBuildThisFileDirectory)Core\Experiment.lua" />
+    <None Include="$(MSBuildThisFileDirectory)Core\Object.lua" />
+    <None Include="$(MSBuildThisFileDirectory)Core\Utilities.lua" />
     <None Include="$(MSBuildThisFileDirectory)Prompts\DecodeUserIntent.txt" />
     <None Include="$(MSBuildThisFileDirectory)Prompts\DescribeScene.txt" />
     <None Include="$(MSBuildThisFileDirectory)Prompts\IdleUserInputResponse.txt" />

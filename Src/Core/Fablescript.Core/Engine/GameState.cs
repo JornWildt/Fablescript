@@ -39,8 +39,8 @@ namespace Fablescript.Core.Engine
 
     internal void Initialize()
     {
-      // Get the GameObject prototype
-      ObjectPrototype = (LuaTable)RuntimeEnvironment["GameObject"];
+      // Get the BaseObject prototype
+      ObjectPrototype = (LuaTable)RuntimeEnvironment["BaseObject"];
 
       // Get the constructor function
       ObjectConstructor = (LuaFunction)ObjectPrototype["new"];      
@@ -49,7 +49,7 @@ namespace Fablescript.Core.Engine
 
     internal dynamic AddObject(ObjectId id, ExpandoObject src)
     {
-      // Call GameObject:new{...} to create the object in Lua
+      // Call BaseObject:new{...} to create the object in Lua
       var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
 
       LuaConverter.ConvertToLuaTable(RuntimeEnvironment, table, src);
@@ -79,6 +79,16 @@ namespace Fablescript.Core.Engine
     }
 
 
+    internal void InvokeMethod(LuaTable self, string methodName, params object[] args)
+    {
+      var method = (LuaFunction)self[methodName];
+      var allArgs = new object[1 + args.Length];
+      allArgs[0] = self;
+      Array.Copy(args, 0, allArgs, 1, args.Length);
+      method.Call(allArgs);
+    }
+    
+    
     internal void InvokeFunction(string functionName, params object[] args)
     {
       var path = functionName.Split('.');
