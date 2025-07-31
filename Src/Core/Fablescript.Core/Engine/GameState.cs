@@ -81,7 +81,14 @@ namespace Fablescript.Core.Engine
 
     internal void InvokeFunction(string functionName, params object[] args)
     {
-      var func = (LuaFunction)RuntimeEnvironment[functionName];
+      var path = functionName.Split('.');
+      var element = RuntimeEnvironment[path[0]];
+      for (int i=1; i<path.Length; i++)
+      {
+        if (element is LuaTable t)
+          element = t[path[i]];
+      }
+      var func = (LuaFunction)element;
       var result = func.Call(args);
     }
   }

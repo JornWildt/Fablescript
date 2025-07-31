@@ -1,5 +1,5 @@
 ﻿-- Core base class system
-function createPrototype(base)
+function create_prototype(base)
     local prototype = base or {}
     prototype.__index = prototype
     function prototype:new(o)
@@ -10,24 +10,17 @@ function createPrototype(base)
     return prototype
 end
 
--- Game object prototype
-GameObject = createPrototype()
-
+-- Game base object prototype
+GameObject = create_prototype()
 GameObject.Name = "Unnamed"
 GameObject.Description = "No description."
-GameObject.Hugo = "H.u.g.o"
-
-
-function GameObject:Inspect()
-    print("You see a " .. self.Name .. ": " .. self.Description .. "(" .. self.Hugo .. ")")
-end
 
 
 Commands = {}
 
-function Commands_Inspect(obj)
+function Commands.inspect(obj)
   print("OBJ: " .. obj.Name)
 end
 
 
-Commands_Inspect(GameObject)
+Commands.inspect(GameObject)

@@ -111,7 +111,7 @@ namespace Fablescript.Core.Engine
       var game = await GameStateRepository.GetAsync(cmd.GameId);
       LuaObject location = game.GetObject(game.Player.LocationId);
 
-      game.InvokeFunction("Commands_Inspect", location.Source);
+      game.InvokeFunction("Commands.inspect", location.Source);
 
 #if false
       string locationId = location.Id;
@@ -197,12 +197,6 @@ namespace Fablescript.Core.Engine
     }
 
 
-    private Fact Fact2FableObject(LocationFactDefinition fact)
-    {
-      return new Fact(fact.Text);
-    }
-
-
     private ExpandoObject Fact2Expando(LocationFactDefinition fact)
     {
       dynamic obj = new ExpandoObject();
@@ -225,49 +219,10 @@ namespace Fablescript.Core.Engine
     }
 
 
-    private Exit Exit2FableObject(
-      LocationExitDefinition x,
-      ObjectId targetId)
-    {
-      return new Exit(
-        x.Name,
-        x.Title,
-        x.Description,
-        targetId);
-    }
-
-
     public class PlayerIntent
     {
       public string? intent { get; set; }
       public string? move_exit_name { get; set; }
-    }
-  }
-
-
-  public class Fact
-  {
-    public string Text { get; set; }
-    
-    public Fact(string text)
-    {
-      Text = text;
-    }
-  }
-
-  public class Exit
-  {
-    public string Name { get; set; }
-    public string Title { get; set; }
-    public string? Description { get; set; }
-    public ObjectId TargetLocationId { get; set; }
-    
-    public Exit(string name, string title, string? description, ObjectId targetLocationId)
-    {
-      Name = name;
-      Title = title;
-      Description = description;
-      TargetLocationId = targetLocationId;
     }
   }
 }
