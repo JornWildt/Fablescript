@@ -43,7 +43,6 @@ namespace Fablescript.Core.Engine
       var gameId = new GameId(Guid.NewGuid());
       var fable = await FablescriptParser.GetFableAsync(cmd.FableId);
 
-
       var locationIdMapping = new Dictionary<string, ObjectId>();
       foreach (var locDef in fable.Locations)
         locationIdMapping[locDef.Name] = new ObjectId(Guid.NewGuid());
@@ -57,6 +56,8 @@ namespace Fablescript.Core.Engine
         gameId,
         cmd.FableId,
         player);
+
+      gameState.Initialize();
 
       var locationNameMapping = new Dictionary<string, FableObject>();
       var objectNameMapping = new Dictionary<string, FableObject>();

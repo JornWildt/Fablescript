@@ -15,6 +15,8 @@ namespace Fablescript.Core.Engine
 
     private Lua RuntimeEnvironment { get; set; }
 
+    private LuaFunction ObjectConstructor { get; set; } = null!;
+
     private IDictionary<ObjectId, FableObject> Objects { get; }
 
 
@@ -28,6 +30,18 @@ namespace Fablescript.Core.Engine
       Player = player;
       RuntimeEnvironment = new Lua();
       Objects = new Dictionary<ObjectId, FableObject>();
+    }
+
+
+    public void Initialize()
+    {
+      RuntimeEnvironment.DoFile("C:\\Projects\\Fablescript\\Src\\Core\\Fablescript.Core\\Engine\\LuaInit.lua");
+      
+      // Get the GameObject prototype
+      var gameObjectPrototype = (LuaTable)RuntimeEnvironment["GameObject"];
+
+      // Get the constructor function
+      ObjectConstructor = (LuaFunction)gameObjectPrototype["new"]; DateOnly 
     }
 
 
