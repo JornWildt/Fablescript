@@ -1,8 +1,8 @@
-﻿using System.Collections.Concurrent;
-using Fablescript.Core.Contract.Engine;
+﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base.Persistence;
 using NLua;
+using System.Dynamic;
 
 namespace Fablescript.Core.Engine
 {
@@ -15,9 +15,14 @@ namespace Fablescript.Core.Engine
 
     private Lua RuntimeEnvironment { get; set; }
 
+
+    private LuaTable ObjectPrototype { get; set; } = null!;
+
     private LuaFunction ObjectConstructor { get; set; } = null!;
 
-    private IDictionary<ObjectId, FableObject> Objects { get; }
+    private LuaFunction ObjectInspector { get; set; } = null!;
+
+    private IDictionary<ObjectId, LuaTable> Objects { get; }
 
 
     public GameState(
@@ -29,29 +34,40 @@ namespace Fablescript.Core.Engine
       FableId = fableId;
       Player = player;
       RuntimeEnvironment = new Lua();
-      Objects = new Dictionary<ObjectId, FableObject>();
+      Objects = new Dictionary<ObjectId, LuaTable>();
     }
 
 
     public void Initialize()
     {
-      RuntimeEnvironment.DoFile("C:\\Projects\\Fablescript\\Src\\Core\\Fablescript.Core\\Engine\\LuaInit.lua");
-      
+      RuntimeEnvironment.DoFile("D:\\External\\Fablescript\\Src\\Core\\Fablescript.Core\\Engine\\LuaInit.lua");
+
       // Get the GameObject prototype
-      var gameObjectPrototype = (LuaTable)RuntimeEnvironment["GameObject"];
+      ObjectPrototype = (LuaTable)RuntimeEnvironment["GameObject"];
 
       // Get the constructor function
-      ObjectConstructor = (LuaFunction)gameObjectPrototype["new"]; DateOnly 
+      ObjectConstructor = (LuaFunction)ObjectPrototype["new"];
+      
+      ObjectInspector = (LuaFunction)ObjectPrototype["Inspect"];
     }
 
 
-    public void AddObject(ObjectId id, FableObject obj)
+    public LuaTable AddObject(ObjectId id, ExpandoObject obj)
     {
-      Objects.TryAdd(id, obj);
+      // Call GameObject:new{...} to create the object in Lua
+      var result = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
+
+      foreach (var item in obj)
+      {
+        result[item.Key] = item.Value;
+      }
+
+      Objects[id] = result;
+      return result;
     }
 
-    
-    public FableObject GetObject(ObjectId id)
+
+    public LuaTable GetObject(ObjectId id)
     {
       return Objects[id];
     }
@@ -59,7 +75,7 @@ namespace Fablescript.Core.Engine
 
     public IEnumerable<dynamic> GetAllObjects()
     {
-      return Objects.Values.Cast<dynamic>().AsEnumerable();
+      return Objects.Values.Select(o => new LuaObject(o)).AsEnumerable();
     }
   }
 }

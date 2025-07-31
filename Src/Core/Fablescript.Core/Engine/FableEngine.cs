@@ -1,9 +1,10 @@
-﻿using System.Linq;
-using Fablescript.Core.Contract.Engine;
+﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Engine.Commands;
 using Fablescript.Core.Fablescript;
 using Fablescript.Core.Prompts;
 using Fablescript.Utility.Services.CommandQuery;
+using NLua;
+using System.Dynamic;
 
 namespace Fablescript.Core.Engine
 {
@@ -59,12 +60,10 @@ namespace Fablescript.Core.Engine
 
       gameState.Initialize();
 
-      var locationNameMapping = new Dictionary<string, FableObject>();
-      var objectNameMapping = new Dictionary<string, FableObject>();
-
       foreach (var objDef in fable.Objects)
       {
-        dynamic obj = new FableObject(new ObjectId(Guid.NewGuid()), gameId);
+        dynamic obj = new ExpandoObject();
+        obj.Id = new ObjectId(Guid.NewGuid());
         obj.Name = objDef.Name;
         obj.Title = objDef.Title;
         obj.Description = objDef.Description;
@@ -72,24 +71,20 @@ namespace Fablescript.Core.Engine
           obj.Location = locationIdMapping[objDef.Location];
 
         gameState.AddObject(obj.Id, obj);
-
-        objectNameMapping[objDef.Name] = obj;
       }
 
       foreach (var locDef in fable.Locations)
       {
-        dynamic loc = new FableObject(locationIdMapping[locDef.Name], gameId);
+        dynamic loc = new ExpandoObject();
+        loc.Id = locationIdMapping[locDef.Name];
         loc.Name = locDef.Name;
         loc.Title = locDef.Title;
         loc.Introduction = locDef.Introduction;
 
-        loc.Facts = locDef.Facts.Select(Fact2FableObject).ToList();
-        loc.Exits = locDef.Exits.Select(x => Exit2FableObject(x, locationIdMapping[x.TargetLocationName])).ToList();
+        //loc.Facts = locDef.Facts.Select(Fact2FableObject).ToList();
+        //loc.Exits = locDef.Exits.Select(x => Exit2FableObject(x, locationIdMapping[x.TargetLocationName])).ToList();
 
         gameState.AddObject(loc.Id, loc);
-
-        objectNameMapping[locDef.Name] = loc;
-        locationNameMapping[locDef.Name] = loc;
       }
 
       await GameStateRepository.AddAsync(gameState);
@@ -101,8 +96,8 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      dynamic location = game.GetObject(game.Player.LocationId);
-      var sceneDescription = await DescribeScene(game, location);
+      LuaTable location = game.GetObject(game.Player.LocationId);
+      var sceneDescription = await DescribeScene(game, new LuaObject(location));
       cmd.Answer.Value = sceneDescription;
     }
 
@@ -110,14 +105,14 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      dynamic location = game.GetObject(game.Player.LocationId);
+      dynamic location = new LuaObject(game.GetObject(game.Player.LocationId));
 
       dynamic[] objectsHere = game.GetAllObjects()
         .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
         .ToArray();
 
-      var facts = (List<Fact>)location.Facts;
-      var exits = (List<Exit>)location.Exits;
+      var facts = (List<Fact>)location.Facts ?? new List<Fact>();
+      var exits = (List<Exit>)location.Exits ?? new List<Exit>();
 
       var args = new
       {
@@ -138,7 +133,7 @@ namespace Fablescript.Core.Engine
         if (exit != null)
         {
           var newLocationId = exit.TargetLocationId;
-          dynamic newLocation = game.GetObject(newLocationId);
+          LuaTable newLocation = game.GetObject(newLocationId);
           if (newLocation != null)
           {
             game.Player.LocationId = newLocationId;
@@ -163,8 +158,8 @@ namespace Fablescript.Core.Engine
         .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
         .ToArray();
 
-      var facts = (List<Fact>)location.Facts;
-      var exits = (List<Exit>)location.Exits;
+      var facts = (List<Fact>)location.Facts ?? new List<Fact>();
+      var exits = (List<Exit>)location.Exits ?? new List<Exit>();
 
       if (!DeveloperConfig.SkipUseOfAI)
       {
