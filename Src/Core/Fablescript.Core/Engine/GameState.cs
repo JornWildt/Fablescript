@@ -2,6 +2,7 @@
 using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base.Persistence;
+using NLua;
 
 namespace Fablescript.Core.Engine
 {
@@ -12,33 +13,39 @@ namespace Fablescript.Core.Engine
     public Player Player { get; private set; }
 
 
+    private Lua RuntimeEnvironment { get; set; }
+
     private IDictionary<ObjectId, FableObject> Objects { get; }
 
 
     public GameState(
       GameId id,
       FableId fableId,
-      Player player,
-      IReadOnlyCollection<FableObject> objects)
+      Player player)
       : base(id)
     {
       FableId = fableId;
       Player = player;
-
-      Objects = new ConcurrentDictionary<ObjectId, FableObject>(
-        objects.Select(o => KeyValuePair.Create(o.Id, o)));
+      RuntimeEnvironment = new Lua();
+      Objects = new Dictionary<ObjectId, FableObject>();
     }
 
 
-    public Task<FableObject> GetObjectAsync(ObjectId id)
+    public void AddObject(ObjectId id, FableObject obj)
     {
-      return Task.FromResult(Objects[id]);
+      Objects.TryAdd(id, obj);
+    }
+
+    
+    public FableObject GetObject(ObjectId id)
+    {
+      return Objects[id];
     }
 
 
-    public Task<IEnumerable<dynamic>> GetAllObjectsAsync()
+    public IEnumerable<dynamic> GetAllObjects()
     {
-      return Task.FromResult(Objects.Values.Cast<dynamic>().AsEnumerable());
+      return Objects.Values.Cast<dynamic>().AsEnumerable();
     }
   }
 }

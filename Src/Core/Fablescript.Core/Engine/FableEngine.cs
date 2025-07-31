@@ -43,12 +43,23 @@ namespace Fablescript.Core.Engine
       var gameId = new GameId(Guid.NewGuid());
       var fable = await FablescriptParser.GetFableAsync(cmd.FableId);
 
-      var objectNameMapping = new Dictionary<string, FableObject>();
-      var locationNameMapping = new Dictionary<string, FableObject>();
 
       var locationIdMapping = new Dictionary<string, ObjectId>();
       foreach (var locDef in fable.Locations)
         locationIdMapping[locDef.Name] = new ObjectId(Guid.NewGuid());
+
+      var initialLocationId = locationIdMapping[fable.InitialLocation];
+
+      var player = new Player(
+        initialLocationId);
+
+      var gameState = new GameState(
+        gameId,
+        cmd.FableId,
+        player);
+
+      var locationNameMapping = new Dictionary<string, FableObject>();
+      var objectNameMapping = new Dictionary<string, FableObject>();
 
       foreach (var objDef in fable.Objects)
       {
@@ -58,6 +69,8 @@ namespace Fablescript.Core.Engine
         obj.Description = objDef.Description;
         if (objDef.Location != null)
           obj.Location = locationIdMapping[objDef.Location];
+
+        gameState.AddObject(obj.Id, obj);
 
         objectNameMapping[objDef.Name] = obj;
       }
@@ -72,20 +85,11 @@ namespace Fablescript.Core.Engine
         loc.Facts = locDef.Facts.Select(Fact2FableObject).ToList();
         loc.Exits = locDef.Exits.Select(x => Exit2FableObject(x, locationIdMapping[x.TargetLocationName])).ToList();
 
+        gameState.AddObject(loc.Id, loc);
+
         objectNameMapping[locDef.Name] = loc;
         locationNameMapping[locDef.Name] = loc;
       }
-
-      var initialLocationId = locationNameMapping[fable.InitialLocation].Id;
-
-      var player = new Player(
-        initialLocationId);
-
-      var gameState = new GameState(
-        gameId,
-        cmd.FableId,
-        player,
-        objectNameMapping.Values);
 
       await GameStateRepository.AddAsync(gameState);
 
@@ -96,7 +100,7 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      dynamic location = await game.GetObjectAsync(game.Player.LocationId);
+      dynamic location = game.GetObject(game.Player.LocationId);
       var sceneDescription = await DescribeScene(game, location);
       cmd.Answer.Value = sceneDescription;
     }
@@ -105,9 +109,9 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      dynamic location = await game.GetObjectAsync(game.Player.LocationId);
+      dynamic location = game.GetObject(game.Player.LocationId);
 
-      dynamic[] objectsHere = (await game.GetAllObjectsAsync())
+      dynamic[] objectsHere = game.GetAllObjects()
         .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
         .ToArray();
 
@@ -133,7 +137,7 @@ namespace Fablescript.Core.Engine
         if (exit != null)
         {
           var newLocationId = exit.TargetLocationId;
-          dynamic newLocation = await game.GetObjectAsync(newLocationId);
+          dynamic newLocation = game.GetObject(newLocationId);
           if (newLocation != null)
           {
             game.Player.LocationId = newLocationId;
@@ -154,7 +158,7 @@ namespace Fablescript.Core.Engine
       GameState game,
       dynamic location)
     {
-      dynamic[] objectsHere = (await game.GetAllObjectsAsync())
+      dynamic[] objectsHere = game.GetAllObjects()
         .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
         .ToArray();
 
