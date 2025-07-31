@@ -69,28 +69,28 @@ namespace Fablescript.Core.Engine
       foreach (var objDef in fable.Objects)
       {
         dynamic obj = new ExpandoObject();
-        obj.Id = new ObjectId(Guid.NewGuid());
-        obj.Name = objDef.Name;
-        obj.Title = objDef.Title;
-        obj.Description = objDef.Description;
+        obj.id = new ObjectId(Guid.NewGuid());
+        obj.name = objDef.Name;
+        obj.title = objDef.Title;
+        obj.description = objDef.Description;
         if (objDef.Location != null)
-          obj.Location = locationIdMapping[objDef.Location];
+          obj.location = locationIdMapping[objDef.Location];
 
-        gameState.AddObject(obj.Id, obj);
+        gameState.AddObject(obj.id, obj);
       }
 
       foreach (var locDef in fable.Locations)
       {
         dynamic loc = new ExpandoObject();
-        loc.Id = locationIdMapping[locDef.Name];
-        loc.Name = locDef.Name;
-        loc.Title = locDef.Title;
-        loc.Introduction = locDef.Introduction;
+        loc.id = locationIdMapping[locDef.Name];
+        loc.name = locDef.Name;
+        loc.title = locDef.Title;
+        loc.introduction = locDef.Introduction;
 
-        loc.Facts = locDef.Facts.Select(Fact2Expando).ToArray();
-        loc.Exits = locDef.Exits.Select(x => Exit2Expando(x, locationIdMapping[x.TargetLocationName])).ToArray();
+        loc.facts = locDef.Facts.Select(Fact2Expando).ToArray();
+        loc.exits = locDef.Exits.Select(x => Exit2Expando(x, locationIdMapping[x.TargetLocationName])).ToArray();
 
-        gameState.AddObject(loc.Id, loc);
+        gameState.AddObject(loc.id, loc);
       }
 
       await GameStateRepository.AddAsync(gameState);
@@ -122,8 +122,8 @@ namespace Fablescript.Core.Engine
         .Where(o => (ObjectId)o.Location == locationId)
         .ToArray();
 
-      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Facts).ToArray();
-      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Exits).ToArray();
+      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.facts).ToArray();
+      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.exits).ToArray();
 
       var args = new
       {
@@ -167,11 +167,11 @@ namespace Fablescript.Core.Engine
       dynamic location)
     {
       dynamic[] objectsHere = game.GetAllObjects()
-        .Where(o => (string)o.Location == (string)location.Id)
+        .Where(o => (string)o.location == (string)location.id)
         .ToArray();
 
-      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Facts).ToArray();
-      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Exits).ToArray();
+      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.facts).ToArray();
+      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.exits).ToArray();
 
       if (!DeveloperConfig.SkipUseOfAI)
       {
@@ -183,7 +183,7 @@ namespace Fablescript.Core.Engine
           HasFacts = facts.Length > 0,
           Exits = exits.Select(x => new { Name = x.Name, Description = x.Description }).ToArray(),
           HasExits = exits.Length > 0,
-          Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray(),
+          Objects = objectsHere.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
           HasObjects = objectsHere.Length > 0
         };
         var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
@@ -191,9 +191,9 @@ namespace Fablescript.Core.Engine
       }
       else
       {
-        var factText = facts.Aggregate("", (a, b) => a + "\n- " + b.Text);
-        var exitText = exits.Aggregate("", (a, b) => a + "\n- " + b.Name + ": " + b.Description);
-        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + (string)b.Title + ": " + (string)b.Description);
+        var factText = facts.Aggregate("", (a, b) => a + "\n- " + b.text);
+        var exitText = exits.Aggregate("", (a, b) => a + "\n- " + b.name + ": " + b.description);
+        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + (string)b.title + ": " + (string)b.description);
         return $"### {location.Title}\n{location.Introduction}\n\nFacts:\n{factText}\n\nExits:\n{exitText}\n\nObjects:\n{objects}";
       }
     }
@@ -202,7 +202,7 @@ namespace Fablescript.Core.Engine
     private ExpandoObject Fact2Expando(LocationFactDefinition fact)
     {
       dynamic obj = new ExpandoObject();
-      obj.Text = fact.Text;
+      obj.text = fact.Text;
       return obj;
     }
 
@@ -212,10 +212,10 @@ namespace Fablescript.Core.Engine
       ObjectId targetId)
     {
       dynamic exit = new ExpandoObject();
-      exit.Name = x.Name;
-      exit.Title = x.Title;
-      exit.Description = x.Description;
-      exit.TargetLocationId = targetId;
+      exit.name = x.Name;
+      exit.title = x.Title;
+      exit.description = x.Description;
+      exit.targetLocationId = targetId;
 
       return exit;
     }

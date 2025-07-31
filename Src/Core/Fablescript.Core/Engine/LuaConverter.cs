@@ -10,11 +10,11 @@ namespace Fablescript.Core.Engine
     public static LuaTable ConvertToLuaTable(Lua lua, ExpandoObject src)
     {
       var table = (LuaTable)lua.DoString("return {}")[0];
-      return ConvertToLuaTable(lua, table, src);
+      return CopyToLuaTable(lua, table, src);
     }
 
 
-    public static LuaTable ConvertToLuaTable(Lua lua, LuaTable? table, ExpandoObject src)
+    public static LuaTable CopyToLuaTable(Lua lua, LuaTable? table, ExpandoObject src)
     {
       table = table ?? (LuaTable)lua.DoString("return {}")[0];
 
