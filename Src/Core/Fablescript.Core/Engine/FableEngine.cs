@@ -81,8 +81,8 @@ namespace Fablescript.Core.Engine
         loc.Title = locDef.Title;
         loc.Introduction = locDef.Introduction;
 
-        //loc.Facts = locDef.Facts.Select(Fact2FableObject).ToList();
-        //loc.Exits = locDef.Exits.Select(x => Exit2FableObject(x, locationIdMapping[x.TargetLocationName])).ToList();
+        loc.Facts = locDef.Facts.Select(Fact2Expando).ToArray();
+        loc.Exits = locDef.Exits.Select(x => Exit2Expando(x, locationIdMapping[x.TargetLocationName])).ToArray();
 
         gameState.AddObject(loc.Id, loc);
       }
@@ -96,8 +96,8 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      LuaTable location = game.GetObject(game.Player.LocationId);
-      var sceneDescription = await DescribeScene(game, new LuaObject(location));
+      var location = game.GetObject(game.Player.LocationId);
+      var sceneDescription = await DescribeScene(game, location);
       cmd.Answer.Value = sceneDescription;
     }
 
@@ -105,10 +105,11 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      dynamic location = new LuaObject(game.GetObject(game.Player.LocationId));
+      dynamic location = game.GetObject(game.Player.LocationId);
+      var locationId = (ObjectId)location.Id;
 
       dynamic[] objectsHere = game.GetAllObjects()
-        .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
+        .Where(o => (ObjectId)o.Location == locationId)
         .ToArray();
 
       var facts = (List<Fact>)location.Facts ?? new List<Fact>();
@@ -155,7 +156,7 @@ namespace Fablescript.Core.Engine
       dynamic location)
     {
       dynamic[] objectsHere = game.GetAllObjects()
-        .Where(o => (ObjectId)o.Location == (ObjectId)location.Id)
+        .Where(o => (string)o.Location == (string)location.Id)
         .ToArray();
 
       var facts = (List<Fact>)location.Facts ?? new List<Fact>();
@@ -190,6 +191,28 @@ namespace Fablescript.Core.Engine
     private Fact Fact2FableObject(LocationFactDefinition fact)
     {
       return new Fact(fact.Text);
+    }
+
+
+    private ExpandoObject Fact2Expando(LocationFactDefinition fact)
+    {
+      dynamic obj = new ExpandoObject();
+      obj.Text = fact.Text;
+      return obj;
+    }
+
+
+    private ExpandoObject Exit2Expando(
+      LocationExitDefinition x,
+      ObjectId targetId)
+    {
+      dynamic exit = new ExpandoObject();
+      exit.Name = x.Name;
+      exit.Title = x.Title;
+      exit.Description = x.Description;
+      exit.TargetLocationId = targetId;
+
+      return exit;
     }
 
 
