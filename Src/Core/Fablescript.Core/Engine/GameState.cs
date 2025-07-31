@@ -1,8 +1,9 @@
-﻿using Fablescript.Core.Contract.Engine;
+﻿using System.Dynamic;
+using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Fablescript;
+using Fablescript.Core.Fablescript;
 using Fablescript.Utility.Base.Persistence;
 using NLua;
-using System.Dynamic;
 
 namespace Fablescript.Core.Engine
 {
@@ -38,8 +39,6 @@ namespace Fablescript.Core.Engine
 
     internal void Initialize()
     {
-      RuntimeEnvironment.DoFile("D:\\External\\Fablescript\\Src\\Core\\Fablescript.Core\\Engine\\LuaInit.lua");
-
       // Get the GameObject prototype
       ObjectPrototype = (LuaTable)RuntimeEnvironment["GameObject"];
 
@@ -71,6 +70,12 @@ namespace Fablescript.Core.Engine
     internal IEnumerable<dynamic> GetAllObjects()
     {
       return Objects.Values.AsEnumerable();
+    }
+
+
+    internal void LoadScript(string filename)
+    {
+      RuntimeEnvironment.DoFile(filename);
     }
 
 

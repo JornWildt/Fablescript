@@ -24,23 +24,22 @@ namespace Fablescript.Core
 
       services.AddAllServiceInterfaces<FableEngine>(asSingleton: false);
 
+      services.AddVerifiedConfiguration<FablescriptConfiguration>(configuration, "Fablescript");
       var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FablescriptConfiguration>("Fablescript");
 
       services.AddSingleton<IFablescriptParser>(serviceProvider =>
       {
         return new FablescriptParser(
-          new FablescriptParser.FileWatchParserConfiguration(fablescriptConfig.FableDirectory, fablescriptConfig.SchemaDirectory),
+          new FablescriptParser.FileWatchParserConfiguration(fablescriptConfig.Fables, fablescriptConfig.SchemaDirectory),
           serviceProvider.GetRequiredService<ILogger<FablescriptParser>>());
       });
 
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
 
-      var promptConfig = configuration.GetVerifiedConfigurationSection<PromptProviderConfiguration>("Prompts");
-
       services.AddSingleton(serviceProvider =>
       {
         return new PromptDefinitionParser(
-          new PromptDefinitionParser.FileWatchParserConfiguration(promptConfig.PromptDirectory, null),
+          new PromptDefinitionParser.FileWatchParserConfiguration(fablescriptConfig.Prompts, null),
           serviceProvider.GetRequiredService<ILogger<PromptDefinitionParser>>());
       });
       services.AddSingleton<IPromptDefinitionProvider, TextFilePromptDefinitionProvider>();

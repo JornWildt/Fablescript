@@ -19,6 +19,7 @@ namespace Fablescript.Core.Engine
     private readonly IGameStateRepository GameStateRepository;
     private readonly IPromptRunner PromptRunner;
     private readonly IStructuredPromptRunner StructuredPromptRunner;
+    private readonly FablescriptConfiguration FablescriptConfig;
     private readonly DeveloperConfiguration DeveloperConfig;
 
     #endregion
@@ -29,12 +30,14 @@ namespace Fablescript.Core.Engine
       IGameStateRepository gameStateRepository,
       IPromptRunner promptRunner,
       IStructuredPromptRunner structuredPromptRunner,
+      FablescriptConfiguration fablescriptConfig,
       DeveloperConfiguration developerConfig)
     {
       FablescriptParser = fablescriptParser;
       GameStateRepository = gameStateRepository;
       PromptRunner = promptRunner;
       StructuredPromptRunner = structuredPromptRunner;
+      FablescriptConfig = fablescriptConfig;
       DeveloperConfig = developerConfig;
     }
 
@@ -58,6 +61,7 @@ namespace Fablescript.Core.Engine
         cmd.FableId,
         player);
 
+      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Core.lua"));
       gameState.Initialize();
 
       foreach (var objDef in fable.Objects)

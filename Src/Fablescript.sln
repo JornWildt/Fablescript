@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Web.Client", "W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fablescript.Utility.AspNet", "Utility\Fablescript.Utility.AspNet\Fablescript.Utility.AspNet.csproj", "{66701717-F9CE-9F5F-0A80-E67EE80E9291}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Resources", "Resources\Resources.shproj", "{F0D14FDD-E691-4EE4-8F4A-47EB7F6E9520}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,5 +111,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A616809-78DF-4E01-ABD8-D7157B632EA0}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Resources\Resources.projitems*{f0d14fdd-e691-4ee4-8f4a-47eb7f6e9520}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
