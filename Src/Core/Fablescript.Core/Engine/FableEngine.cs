@@ -47,50 +47,50 @@ namespace Fablescript.Core.Engine
       var gameId = new GameId(Guid.NewGuid());
       var fable = await FablescriptParser.GetFableAsync(cmd.FableId);
 
-      var locationIdMapping = new Dictionary<string, ObjectId>();
-      foreach (var locDef in fable.Locations)
-        locationIdMapping[locDef.Name] = new ObjectId(Guid.NewGuid());
-
-      var initialLocationId = locationIdMapping[fable.InitialLocation];
-
-      var player = new Player(
-        initialLocationId);
-
       var gameState = new GameState(
         gameId,
-        cmd.FableId,
-        player);
+        cmd.FableId);
 
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Core.lua"));
       gameState.Initialize();
 
-      foreach (var objDef in fable.Objects)
-      {
-        dynamic obj = new ExpandoObject();
-        obj.id = new ObjectId(Guid.NewGuid());
-        obj.name = objDef.Name;
-        obj.title = objDef.Title;
-        obj.description = objDef.Description;
-        if (objDef.Location != null)
-          obj.location = locationIdMapping[objDef.Location];
-
-        gameState.AddObject(obj.id, obj);
-      }
+      var locationName2ObjectMapping = new Dictionary<string, LuaObject>();
 
       foreach (var locDef in fable.Locations)
       {
-        dynamic loc = new ExpandoObject();
-        loc.id = locationIdMapping[locDef.Name];
+        dynamic loc = gameState.CreateBaseObject();
         loc.name = locDef.Name;
         loc.title = locDef.Title;
         loc.introduction = locDef.Introduction;
 
-        loc.facts = locDef.Facts.Select(Fact2Expando).ToArray();
-        loc.exits = locDef.Exits.Select(x => Exit2Expando(x, locationIdMapping[x.TargetLocationName])).ToArray();
+        loc.facts = gameState.CreateLuaArray(locDef.Facts.Select(f => Fact2LuaTable(gameState, f)));
 
-        gameState.AddObject(loc.id, loc);
+        locationName2ObjectMapping[locDef.Name] = loc;
+      }
+
+      foreach (var locDef in fable.Locations)
+      {
+        dynamic loc = locationName2ObjectMapping[locDef.Name];
+        var exits = locDef.Exits.Select(x => Exit2LuaTable(gameState, x, locationName2ObjectMapping[x.TargetLocationName]));
+        loc.exits = gameState.CreateLuaArray(exits);
+      }
+
+      var playerInitialLocation = locationName2ObjectMapping[fable.InitialLocation].Source;
+      gameState.InvokeMethod(gameState.Player.Source, "move_to", playerInitialLocation);
+
+      foreach (var objDef in fable.Objects)
+      {
+        dynamic obj = gameState.CreateBaseObject();
+        obj.name = objDef.Name;
+        obj.title = objDef.Title;
+        obj.description = objDef.Description;
+        if (objDef.Location != null)
+        {
+          var location = locationName2ObjectMapping[objDef.Location].Source;
+          gameState.InvokeMethod(obj.Source, "move_to", location);
+        }
       }
 
       await GameStateRepository.AddAsync(gameState);
@@ -102,7 +102,7 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      var location = game.GetObject(game.Player.LocationId);
+      var location = (LuaTable)game.Player.location;
       var sceneDescription = await DescribeScene(game, location);
       cmd.Answer.Value = sceneDescription;
     }
@@ -111,9 +111,9 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      LuaObject location = game.GetObject(game.Player.LocationId);
+      //LuaObject location = game.GetObject(game.Player.LocationId);
 
-      game.InvokeMethod(location.Source, "inspect");
+      //game.InvokeMethod(location.Source, "inspect");
 
 #if false
       string locationId = location.Id;
@@ -164,14 +164,17 @@ namespace Fablescript.Core.Engine
 
     private async Task<string> DescribeScene(
       GameState game,
-      dynamic location)
+      LuaTable locationSrc)
     {
-      dynamic[] objectsHere = game.GetAllObjects()
-        .Where(o => (string)o.location == (string)location.id)
-        .ToArray();
+      dynamic location = new LuaObject(locationSrc);
 
-      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.facts).ToArray();
-      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.exits).ToArray();
+      var player = (LuaTable)game.Player.Source;
+
+      var objectsHere = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.objects_here)
+        .Where(o => !player.Equals(o.Source))
+        .ToArray();
+      var facts = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.facts).ToArray();
+      var exits = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.exits).ToArray();
 
       if (!DeveloperConfig.SkipUseOfAI)
       {
@@ -179,9 +182,9 @@ namespace Fablescript.Core.Engine
         {
           Title = (string)location.Title,
           Introduction = (string)location.Introduction,
-          Facts = facts.Select(f => f.Text).ToArray() ?? [],
+          Facts = facts.Select(f => f.text).ToArray() ?? [],
           HasFacts = facts.Length > 0,
-          Exits = exits.Select(x => new { Name = x.Name, Description = x.Description }).ToArray(),
+          Exits = exits.Select(x => new { Name = x.name, Description = x.description }).ToArray(),
           HasExits = exits.Length > 0,
           Objects = objectsHere.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
           HasObjects = objectsHere.Length > 0
@@ -199,23 +202,26 @@ namespace Fablescript.Core.Engine
     }
 
 
-    private ExpandoObject Fact2Expando(LocationFactDefinition fact)
+    private LuaTable Fact2LuaTable(
+      GameState gameState,
+      LocationFactDefinition fact)
     {
-      dynamic obj = new ExpandoObject();
-      obj.text = fact.Text;
+      var obj = gameState.CreateEmptyLuaTable();
+      obj["text"] = fact.Text;
       return obj;
     }
 
 
-    private ExpandoObject Exit2Expando(
+    private LuaTable Exit2LuaTable(
+      GameState gameState,
       LocationExitDefinition x,
-      ObjectId targetId)
+      LuaObject target)
     {
-      dynamic exit = new ExpandoObject();
-      exit.name = x.Name;
-      exit.title = x.Title;
-      exit.description = x.Description;
-      exit.targetLocationId = targetId;
+      var exit = gameState.CreateEmptyLuaTable();
+      exit["name"] = x.Name;
+      exit["title"] = x.Title;
+      exit["description"] = x.Description;
+      exit["targetLocation"] = target.Source;
 
       return exit;
     }

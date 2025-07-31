@@ -11,11 +11,10 @@ namespace Fablescript.Core.Engine
   {
     public FableId FableId { get; private set; }
 
-    public Player Player { get; private set; }
-
 
     private Lua RuntimeEnvironment { get; set; }
 
+    internal dynamic Player { get; private set; } = null!;
 
     private LuaTable ObjectPrototype { get; set; } = null!;
 
@@ -26,12 +25,10 @@ namespace Fablescript.Core.Engine
 
     public GameState(
       GameId id,
-      FableId fableId,
-      Player player)
+      FableId fableId)
       : base(id)
     {
       FableId = fableId;
-      Player = player;
       RuntimeEnvironment = new Lua();
       Objects = new Dictionary<ObjectId, LuaObject>();
     }
@@ -43,24 +40,52 @@ namespace Fablescript.Core.Engine
       ObjectPrototype = (LuaTable)RuntimeEnvironment["BaseObject"];
 
       // Get the constructor function
-      ObjectConstructor = (LuaFunction)ObjectPrototype["new"];      
+      ObjectConstructor = (LuaFunction)ObjectPrototype["new"];
+      
+      Player = CreateBaseObject();
+      Player.Name = "Player";
     }
 
 
-    internal dynamic AddObject(ObjectId id, ExpandoObject src)
+    internal LuaTable CreateEmptyLuaTable()
     {
-      // Call BaseObject:new{...} to create the object in Lua
-      var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
-
-      LuaConverter.CopyToLuaTable(RuntimeEnvironment, table, src);
-
-      InvokeMethod(table, "inspect");
-
-      var obj = new LuaObject(table);
-      Objects[id] = obj;
-
-      return obj;
+      var table = (LuaTable)RuntimeEnvironment.DoString("return {}")[0];
+      return table;
     }
+
+
+    internal LuaTable CreateLuaArray(IEnumerable<LuaTable> items)
+    {
+      var arr = CreateEmptyLuaTable();
+      int i = 1;
+      foreach (LuaTable item in items)
+      {
+        arr[i] = item;
+        ++i;
+      }
+      return arr;
+    }
+
+    internal LuaObject CreateBaseObject()
+    {
+      var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
+      return new LuaObject(table);
+    }
+
+    //internal LuaObject AddObject(ObjectId id, ExpandoObject src)
+    //{
+    //  // Call BaseObject:new{...} to create the object in Lua
+    //  var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
+
+    //  LuaConverter.CopyToLuaTable(RuntimeEnvironment, table, src);
+
+    //  InvokeMethod(table, "inspect");
+
+    //  var obj = new LuaObject(table);
+    //  Objects[id] = obj;
+
+    //  return obj;
+    //}
 
 
     internal LuaObject GetObject(ObjectId id)

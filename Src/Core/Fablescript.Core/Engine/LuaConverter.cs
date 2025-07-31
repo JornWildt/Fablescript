@@ -58,7 +58,7 @@ namespace Fablescript.Core.Engine
     }
 
 
-    public static IEnumerable<dynamic> ConvertLuaTableToArray(LuaTable table)
+    public static IEnumerable<dynamic> ConvertLuaTableToEnumerable(LuaTable table)
     {
       foreach (var item in table.Values)
       {
