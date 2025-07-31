@@ -105,8 +105,12 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      dynamic location = game.GetObject(game.Player.LocationId);
-      var locationId = (ObjectId)location.Id;
+      LuaObject location = game.GetObject(game.Player.LocationId);
+
+      game.InvokeFunction("Commands_Inspect", location.Source);
+
+#if false
+      string locationId = location.Id;
 
       dynamic[] objectsHere = game.GetAllObjects()
         .Where(o => (ObjectId)o.Location == locationId)
@@ -148,6 +152,7 @@ namespace Fablescript.Core.Engine
 
       var idleResponse = await PromptRunner.RunPromptAsync("IdleUserInputResponse", args);
       cmd.Answer.Value += idleResponse;
+#endif
     }
 
 

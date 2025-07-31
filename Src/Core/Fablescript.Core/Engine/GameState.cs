@@ -20,8 +20,6 @@ namespace Fablescript.Core.Engine
 
     private LuaFunction ObjectConstructor { get; set; } = null!;
 
-    private LuaFunction ObjectInspector { get; set; } = null!;
-
     private IDictionary<ObjectId, LuaObject> Objects { get; }
 
 
@@ -38,7 +36,7 @@ namespace Fablescript.Core.Engine
     }
 
 
-    public void Initialize()
+    internal void Initialize()
     {
       RuntimeEnvironment.DoFile("D:\\External\\Fablescript\\Src\\Core\\Fablescript.Core\\Engine\\LuaInit.lua");
 
@@ -46,9 +44,7 @@ namespace Fablescript.Core.Engine
       ObjectPrototype = (LuaTable)RuntimeEnvironment["GameObject"];
 
       // Get the constructor function
-      ObjectConstructor = (LuaFunction)ObjectPrototype["new"];
-      
-      ObjectInspector = (LuaFunction)ObjectPrototype["Inspect"];
+      ObjectConstructor = (LuaFunction)ObjectPrototype["new"];      
     }
 
 
@@ -66,7 +62,7 @@ namespace Fablescript.Core.Engine
     }
 
 
-    internal dynamic GetObject(ObjectId id)
+    internal LuaObject GetObject(ObjectId id)
     {
       return Objects[id];
     }
@@ -75,6 +71,13 @@ namespace Fablescript.Core.Engine
     internal IEnumerable<dynamic> GetAllObjects()
     {
       return Objects.Values.AsEnumerable();
+    }
+
+
+    internal void InvokeFunction(string functionName, params object[] args)
+    {
+      var func = (LuaFunction)RuntimeEnvironment[functionName];
+      var result = func.Call(args);
     }
   }
 }
