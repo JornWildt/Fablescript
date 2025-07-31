@@ -1,10 +1,11 @@
 ﻿using Fablescript.Utility.Base;
 using NLua;
+using System.Collections;
 using System.Dynamic;
 
 namespace Fablescript.Core.Engine
 {
-  internal static class LuaObjectConverter
+  internal static class LuaConverter
   {
     public static LuaTable ConvertToLuaTable(Lua lua, ExpandoObject src)
     {
@@ -44,16 +45,25 @@ namespace Fablescript.Core.Engine
     {
       var table = (LuaTable)lua.DoString("return {}")[0];
 
-      for (int i=0; i<arr.Length; ++i)
+      for (int i = 0; i < arr.Length; ++i)
       {
         var item = arr.GetValue(i);
         if (item is ExpandoObject obj)
         {
-          table[i] = ConvertToLuaTable(lua, table, obj);
+          table[i] = ConvertToLuaTable(lua, obj);
         }
       }
 
       return table;
+    }
+
+
+    public static IEnumerable<dynamic> ConvertLuaTableToArray(LuaTable table)
+    {
+      foreach (var item in table.Values)
+      {
+        yield return new LuaObject((LuaTable)item);
+      }
     }
   }
 }

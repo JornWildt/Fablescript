@@ -57,7 +57,7 @@ namespace Fablescript.Core.Engine
       // Call GameObject:new{...} to create the object in Lua
       var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
 
-      LuaObjectConverter.ConvertToLuaTable(RuntimeEnvironment, table, src);
+      LuaConverter.ConvertToLuaTable(RuntimeEnvironment, table, src);
 
       var obj = new LuaObject(table);
       Objects[id] = obj;

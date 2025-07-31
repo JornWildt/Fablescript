@@ -123,7 +123,10 @@
       <Title>Old tool schack</Title>
       <Facts>
         <Fact>
-          <Text>Inside a tool shack. Light is dim but not completely dark. It smells of oil and old stuff.</Text>
+          <Text>Inside a tool shack. Light is dim but not completely dark.</Text>
+        </Fact>
+        <Fact>
+          <Text>It smells of oil and old stuff.</Text>
         </Fact>
       </Facts>
       <Exits>

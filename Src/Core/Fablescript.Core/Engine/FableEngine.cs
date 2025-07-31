@@ -112,16 +112,16 @@ namespace Fablescript.Core.Engine
         .Where(o => (ObjectId)o.Location == locationId)
         .ToArray();
 
-      var facts = (List<Fact>)location.Facts ?? new List<Fact>();
-      var exits = (List<Exit>)location.Exits ?? new List<Exit>();
+      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Facts).ToArray();
+      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Exits).ToArray();
 
       var args = new
       {
         Title = (string)location.Title,
         Introduction = (string)location.Introduction,
-        HasFacts = facts.Count > 0,
+        HasFacts = facts.Length > 0,
         Exits = exits.Select(x => new { Name = x.Name, Title = x.Title, Description = x.Description }).ToArray(),
-        HasExits = exits.Count > 0,
+        HasExits = exits.Length > 0,
         Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray(),
         HasObjects = objectsHere.Length > 0,
         PlayerInput = cmd.PlayerInput
@@ -159,8 +159,8 @@ namespace Fablescript.Core.Engine
         .Where(o => (string)o.Location == (string)location.Id)
         .ToArray();
 
-      var facts = (List<Fact>)location.Facts ?? new List<Fact>();
-      var exits = (List<Exit>)location.Exits ?? new List<Exit>();
+      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Facts).ToArray();
+      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.Exits).ToArray();
 
       if (!DeveloperConfig.SkipUseOfAI)
       {
@@ -168,10 +168,10 @@ namespace Fablescript.Core.Engine
         {
           Title = (string)location.Title,
           Introduction = (string)location.Introduction,
-          Facts = facts.Select(f => f.Text).ToArray(),
-          HasFacts = facts.Count > 0,
+          Facts = facts.Select(f => f.Text).ToArray() ?? [],
+          HasFacts = facts.Length > 0,
           Exits = exits.Select(x => new { Name = x.Name, Description = x.Description }).ToArray(),
-          HasExits = exits.Count > 0,
+          HasExits = exits.Length > 0,
           Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray(),
           HasObjects = objectsHere.Length > 0
         };
