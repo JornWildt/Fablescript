@@ -46,8 +46,12 @@ function describe_scene()
       location.exits or {}, 
       function(x) return { Title = x.title, Description = x.description } end)
 
-    local objects_here = Fun.map(
+    local objects_here = Fun.filter(
       location.objects_here or {},
+      function(o) return o ~= Player end)
+
+    objects_here = Fun.map(
+      objects_here or {},
       function(o) return { Name = o.name, Title = o.title, Description = o.description } end)
 
     local args = {
@@ -62,7 +66,6 @@ function describe_scene()
     }
     print("Describe: " .. args.Title)
     local output = Core.run_prompt("DescribeScene", args)
-    print("Scene: " .. output);
     return output
   else
     return "You are in the void"

@@ -21,8 +21,8 @@ $args.Exits: {x | - $x.Title$: $x.Description$
 $endif$
 
 $if(args.HasObjects)$
-Objects here:
-$args.Objects: {o | - $o.Name$: $o.Description$
+Objects here (Use markdown to emphasize names of objects here):
+$args.Objects: {o | - $o.Title$: $o.Description$
 }$
 $endif$
 
