@@ -101,27 +101,6 @@ namespace Fablescript.Core.Engine
 
       var idleResponse = await PromptRunner.RunPromptAsync("IdleUserInputResponse", args);
       cmd.Answer.Value += idleResponse;
-
-#if false
-      if (response.intent == "move" && response.move_exit_name != null)
-      {
-        var exit = exits.FirstOrDefault(x => x.Name == response.move_exit_name);
-        if (exit != null)
-        {
-          var newLocationId = exit.TargetLocationId;
-          LuaTable newLocation = game.GetObject(newLocationId);
-          if (newLocation != null)
-          {
-            game.Player.LocationId = newLocationId;
-
-            var sceneDescription = await DescribeScene(game, newLocation);
-            cmd.Answer.Value = sceneDescription;
-            return;
-          }
-        }
-      }
-
-#endif
     }
   }
 }

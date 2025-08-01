@@ -121,5 +121,13 @@ namespace Fablescript.Core.Engine
 
       return exit;
     }
+
+
+    protected async Task<string> RunPromptAsync(string promptName, LuaTable luaArgs)
+    {
+      var args = LuaConverter.ConvertLuaTableToDictionaryOrList(luaArgs);
+      var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
+      return response;
+    }
   }
 }

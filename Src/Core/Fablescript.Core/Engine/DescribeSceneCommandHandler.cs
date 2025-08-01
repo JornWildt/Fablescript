@@ -33,7 +33,7 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<DescribeSceneCommand>.InvokeAsync(DescribeSceneCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      var sceneDescription = DescribeScene(game);
+      var sceneDescription = game.InvokeFunction("describe_scene", []) as string;
       cmd.Answer.Value = sceneDescription;
     }
   }
