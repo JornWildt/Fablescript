@@ -12,7 +12,7 @@ namespace Fablescript.Core.Engine
 
     private Lua RuntimeEnvironment { get; set; }
 
-    internal dynamic Player { get; private set; } = null!;
+    internal dynamic Player { get; set; } = null!;
 
     private LuaTable ObjectPrototype { get; set; } = null!;
 
@@ -20,6 +20,7 @@ namespace Fablescript.Core.Engine
 
     private IDictionary<ObjectId, LuaObject> Objects { get; }
 
+    public List<string> ResponseOutput { get; private init; }
 
 
     public GameState(
@@ -30,18 +31,17 @@ namespace Fablescript.Core.Engine
       FableId = fableId;
       RuntimeEnvironment = new Lua();
       Objects = new Dictionary<ObjectId, LuaObject>();
+      ResponseOutput = new List<string>();
     }
 
 
-    internal void Initialize(LuaObject player)
+    internal void Initialize()
     {
       // Get the BaseObject prototype
       ObjectPrototype = (LuaTable)RuntimeEnvironment["BaseObject"];
 
       // Get the constructor function
       ObjectConstructor = (LuaFunction)ObjectPrototype["new"];
-
-      Player = player;
     }
 
 

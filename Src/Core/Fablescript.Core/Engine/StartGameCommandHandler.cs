@@ -4,29 +4,13 @@ using Fablescript.Core.Fablescript;
 using Fablescript.Core.Prompts;
 using Fablescript.Utility.Services.CommandQuery;
 using NLua;
-using System.Numerics;
 
 namespace Fablescript.Core.Engine
 {
   internal class StartGameCommandHandler :
+    CommandHandlerBase,
     ICommandHandler<StartGameCommand>
   {
-    #region Dependencies
-
-    private readonly IFablescriptParser FablescriptParser;
-    private readonly IStandardLibraryParser StandardLibraryParser;
-    private readonly IGameStateRepository GameStateRepository;
-    private readonly IPromptRunner PromptRunner;
-    private readonly IStructuredPromptRunner StructuredPromptRunner;
-    private readonly FablescriptConfiguration FablescriptConfig;
-    private readonly DeveloperConfiguration? DeveloperConfig;
-
-    #endregion
-
-
-    public List<string> ResponseOutput { get; private init; }
-
-
     public StartGameCommandHandler(
       IFablescriptParser fablescriptParser,
       IStandardLibraryParser standardLibraryParser,
@@ -35,16 +19,15 @@ namespace Fablescript.Core.Engine
       IStructuredPromptRunner structuredPromptRunner,
       FablescriptConfiguration fablescriptConfig,
       DeveloperConfiguration? developerConfig = null)
+      : base(
+          fablescriptParser,
+          standardLibraryParser,
+          gameStateRepository,
+          promptRunner,
+          structuredPromptRunner,
+          fablescriptConfig,
+          developerConfig)
     {
-      FablescriptParser = fablescriptParser;
-      StandardLibraryParser = standardLibraryParser;
-      GameStateRepository = gameStateRepository;
-      PromptRunner = promptRunner;
-      StructuredPromptRunner = structuredPromptRunner;
-      FablescriptConfig = fablescriptConfig;
-      DeveloperConfig = developerConfig;
-
-      ResponseOutput = new List<string>();
     }
 
 
@@ -57,20 +40,19 @@ namespace Fablescript.Core.Engine
         gameId,
         cmd.FableId);
 
-      gameState.AddFunction("Core", "say", new Action<string>(msg => { ResponseOutput.Add(msg); }));
-      gameState.AddFunction("Core", "describe_scene", new Action(() => ResponseOutput.Add(describeScene(this))));
-      //core["say"] = new Action<string>(msg => { ResponseOutput.Add(msg); });
-      //core["describe_scene"] = new Action(() => ResponseOutput.Add(describeScene(this)));
+      gameState.AddFunction("Core", "say", new Action<string>(msg => { gameState.ResponseOutput.Add(msg); }));
+      gameState.AddFunction("Core", "describe_scene", new Action(() => gameState.ResponseOutput.Add(DescribeSceneFunction(gameState))));
 
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Commands.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Core.lua"));
 
-      dynamic player = gameState.CreateBaseObject(null, "Player");
-      player.Name = "Player";
+      gameState.Initialize();
 
-      gameState.Initialize(player);
+      dynamic player = gameState.CreateBaseObject(null, "Player");
+      player.name = "Player";
+      gameState.Player = player;
 
       var locationName2ObjectMapping = new Dictionary<string, LuaObject>();
 

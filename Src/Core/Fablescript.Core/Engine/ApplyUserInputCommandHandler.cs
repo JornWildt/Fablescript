@@ -7,21 +7,9 @@ using NLua;
 namespace Fablescript.Core.Engine
 {
   internal class ApplyUserInputCommandHandler :
+    CommandHandlerBase,
     ICommandHandler<ApplyUserInputCommand>
   {
-    #region Dependencies
-
-    private readonly IFablescriptParser FablescriptParser;
-    private readonly IStandardLibraryParser StandardLibraryParser;
-    private readonly IGameStateRepository GameStateRepository;
-    private readonly IPromptRunner PromptRunner;
-    private readonly IStructuredPromptRunner StructuredPromptRunner;
-    private readonly FablescriptConfiguration FablescriptConfig;
-    private readonly DeveloperConfiguration? DeveloperConfig;
-
-    #endregion
-
-
     public ApplyUserInputCommandHandler(
       IFablescriptParser fablescriptParser,
       IStandardLibraryParser standardLibraryParser,
@@ -30,14 +18,15 @@ namespace Fablescript.Core.Engine
       IStructuredPromptRunner structuredPromptRunner,
       FablescriptConfiguration fablescriptConfig,
       DeveloperConfiguration? developerConfig = null)
+      : base(
+          fablescriptParser,
+          standardLibraryParser,
+          gameStateRepository,
+          promptRunner,
+          structuredPromptRunner,
+          fablescriptConfig,
+          developerConfig)
     {
-      FablescriptParser = fablescriptParser;
-      StandardLibraryParser = standardLibraryParser;
-      GameStateRepository = gameStateRepository;
-      PromptRunner = promptRunner;
-      StructuredPromptRunner = structuredPromptRunner;
-      FablescriptConfig = fablescriptConfig;
-      DeveloperConfig = developerConfig;
     }
 
 
