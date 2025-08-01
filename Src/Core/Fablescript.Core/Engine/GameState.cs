@@ -2,6 +2,7 @@
 using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base.Persistence;
 using NLua;
+using System.Runtime.InteropServices;
 
 namespace Fablescript.Core.Engine
 {
@@ -20,14 +21,25 @@ namespace Fablescript.Core.Engine
 
     private IDictionary<ObjectId, LuaObject> Objects { get; }
 
+    public List<string> ResponseOutput { get; private init; }
 
+    
     public GameState(
       GameId id,
-      FableId fableId)
+      FableId fableId,
+      Func<GameState,string> describeScene)
       : base(id)
     {
       FableId = fableId;
+      ResponseOutput = new List<string>();
+
       RuntimeEnvironment = new Lua();
+
+      var core = CreateEmptyLuaTable();
+      RuntimeEnvironment["Core"] = core;
+      core["say"] = new Action<string>(msg => { ResponseOutput.Add(msg); });
+      core["describe_scene"] = new Action(() => ResponseOutput.Add(describeScene(this)));
+
       Objects = new Dictionary<ObjectId, LuaObject>();
     }
 
@@ -107,25 +119,43 @@ namespace Fablescript.Core.Engine
 
     internal void InvokeMethod(LuaTable self, string methodName, params object[] args)
     {
-      var method = (LuaFunction)self[methodName];
-      var allArgs = new object[1 + args.Length];
-      allArgs[0] = self;
-      Array.Copy(args, 0, allArgs, 1, args.Length);
-      method.Call(allArgs);
+      InvokeWithOutput(() =>
+      {
+        var method = (LuaFunction)self[methodName];
+        var allArgs = new object[1 + args.Length];
+        allArgs[0] = self;
+        Array.Copy(args, 0, allArgs, 1, args.Length);
+        method.Call(allArgs);
+      });
     }
 
 
     internal void InvokeFunction(string functionName, object?[] args)
     {
-      var path = functionName.Split('.');
-      var element = RuntimeEnvironment[path[0]];
-      for (int i = 1; i < path.Length; i++)
+      InvokeWithOutput(() =>
       {
-        if (element is LuaTable t)
-          element = t[path[i]];
-      }
-      var func = (LuaFunction)element;
-      var result = func.Call(args);
+        var path = functionName.Split('.');
+        var element = RuntimeEnvironment[path[0]];
+        for (int i = 1; i < path.Length; i++)
+        {
+          if (element is LuaTable t)
+            element = t[path[i]];
+        }
+        var func = (LuaFunction)element;
+        if (func != null)
+        {
+          func.Call(args);
+        }
+        else
+          Console.WriteLine("Unknown function: " + functionName);
+      });
+    }
+
+
+    void InvokeWithOutput(Action f)
+    {
+      ResponseOutput.Clear();
+      f();
     }
   }
 }

@@ -3,6 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Commands>
     <Command>
+      <Name>look</Name>
+      <Intention>Look around at the surroundings.</Intention>
+      <Usage>look</Usage>
+      <Invoke>Commands.look</Invoke>
+    </Command>
+
+    <Command>
       <Name>inspect</Name>
       <Intention>Inspect, examine, look at or observe an object.</Intention>
       <Usage>Inspect {object}</Usage>

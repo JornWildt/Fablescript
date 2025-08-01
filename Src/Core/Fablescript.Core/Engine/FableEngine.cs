@@ -52,7 +52,8 @@ namespace Fablescript.Core.Engine
 
       var gameState = new GameState(
         gameId,
-        cmd.FableId);
+        cmd.FableId,
+        DescribeSceneFunction);
 
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
@@ -175,6 +176,8 @@ namespace Fablescript.Core.Engine
             }
 
             game.InvokeFunction(command.Invoke, parameters.ToArray());
+            cmd.Answer.Value = string.Join("\n", game.ResponseOutput);
+            return;
           }
         }
       }
@@ -205,6 +208,15 @@ namespace Fablescript.Core.Engine
     }
 
 
+    private string DescribeSceneFunction(
+      GameState game)
+    {
+      var location = (LuaTable)game.Player.location;
+      var sceneDescription = DescribeScene(game, location).GetAwaiter().GetResult();
+      return sceneDescription;
+    }
+
+    
     private async Task<string> DescribeScene(
       GameState game,
       LuaTable locationSrc)
@@ -234,7 +246,7 @@ namespace Fablescript.Core.Engine
           Introduction = (string)location.introduction,
           Facts = facts.Select(f => f.text).ToArray() ?? [],
           HasFacts = facts.Length > 0,
-          Exits = exits.Select(x => new { Name = x.name, Description = x.description }).ToArray(),
+          Exits = exits.Select(x => new { Title = x.title, Description = x.description }).ToArray(),
           HasExits = exits.Length > 0,
           Objects = objectsHere.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
           HasObjects = objectsHere.Length > 0
