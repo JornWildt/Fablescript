@@ -1,4 +1,5 @@
 ﻿using Fablescript.Core.Contract;
+using Fablescript.Core.Contract.Engine.Commands;
 using Fablescript.Core.Engine;
 using Fablescript.Core.Fablescript;
 using Fablescript.Core.LLM;
@@ -8,6 +9,7 @@ using Fablescript.Core.Templating;
 using Fablescript.Utility.Base.Configuration;
 using Fablescript.Utility.Base.UnitOfWork;
 using Fablescript.Utility.Services;
+using Fablescript.Utility.Services.CommandQuery;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,7 +24,9 @@ namespace Fablescript.Core
     {
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
 
-      services.AddAllServiceInterfaces<FableEngine>(asSingleton: false);
+      services.AddScoped<ICommandHandler<StartGameCommand>, StartGameCommandHandler>();
+      services.AddScoped<ICommandHandler<DescribeSceneCommand>, DescribeSceneCommandHandler>();
+      services.AddScoped<ICommandHandler<ApplyUserInputCommand>, ApplyUserInputCommandHandler>();
 
       services.AddVerifiedConfiguration<FablescriptConfiguration>(configuration, "Fablescript");
       var fablescriptConfig = configuration.GetVerifiedConfigurationSection<FablescriptConfiguration>("Fablescript");

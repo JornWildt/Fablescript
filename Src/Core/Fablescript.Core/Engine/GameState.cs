@@ -2,7 +2,6 @@
 using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base.Persistence;
 using NLua;
-using System.Runtime.InteropServices;
 
 namespace Fablescript.Core.Engine
 {
@@ -21,30 +20,20 @@ namespace Fablescript.Core.Engine
 
     private IDictionary<ObjectId, LuaObject> Objects { get; }
 
-    public List<string> ResponseOutput { get; private init; }
 
-    
+
     public GameState(
       GameId id,
-      FableId fableId,
-      Func<GameState,string> describeScene)
+      FableId fableId)
       : base(id)
     {
       FableId = fableId;
-      ResponseOutput = new List<string>();
-
       RuntimeEnvironment = new Lua();
-
-      var core = CreateEmptyLuaTable();
-      RuntimeEnvironment["Core"] = core;
-      core["say"] = new Action<string>(msg => { ResponseOutput.Add(msg); });
-      core["describe_scene"] = new Action(() => ResponseOutput.Add(describeScene(this)));
-
       Objects = new Dictionary<ObjectId, LuaObject>();
     }
 
 
-    internal void Initialize()
+    internal void Initialize(LuaObject player)
     {
       // Get the BaseObject prototype
       ObjectPrototype = (LuaTable)RuntimeEnvironment["BaseObject"];
@@ -52,8 +41,7 @@ namespace Fablescript.Core.Engine
       // Get the constructor function
       ObjectConstructor = (LuaFunction)ObjectPrototype["new"];
 
-      Player = CreateBaseObject(null, "Player");
-      Player.Name = "Player";
+      Player = player;
     }
 
 
@@ -75,6 +63,26 @@ namespace Fablescript.Core.Engine
       }
       return arr;
     }
+
+
+    internal void AddFunction(string? ns, string name, object f)
+    {
+      if (ns != null)
+      {
+        var nsObj = RuntimeEnvironment[ns] as LuaTable;
+        if (nsObj == null)
+        {
+          nsObj = CreateEmptyLuaTable();
+          RuntimeEnvironment[ns] = nsObj;
+        }
+        nsObj[name] = f;
+      }
+      else
+      {
+        RuntimeEnvironment[name] = f;
+      }
+    }
+
 
     internal LuaObject CreateBaseObject(string? ns, string name)
     {
