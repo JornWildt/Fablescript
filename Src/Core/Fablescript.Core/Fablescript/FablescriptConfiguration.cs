@@ -14,6 +14,9 @@ namespace Fablescript.Core.Fablescript
     public string CoreScripts { get; set; } = null!;
 
     [Required]
+    public string StandardLibrary { get; set; } = null!;
+
+    [Required]
     public string Prompts { get; set; } = null!;
   }
 }

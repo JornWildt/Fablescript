@@ -10,15 +10,19 @@ namespace Fablescript.Utility.Base.Configuration
       this IServiceCollection services,
       IConfiguration config,
       string sectionName,
+      bool isOptional = false,
       Action<T>? configurationModifier = null)
       where T : class, new()
     {
-      var result = GetVerifiedConfigurationSection<T>(config, sectionName);
-      if (configurationModifier != null)
+      var result = GetInternalVerifiedConfigurationSection<T>(config, sectionName, isOptional);
+      if (result != null)
       {
-        configurationModifier(result);
+        if (configurationModifier != null)
+        {
+          configurationModifier(result);
+        }
+        services.AddSingleton(result);
       }
-      services.AddSingleton(result);
       return services;
     }
 

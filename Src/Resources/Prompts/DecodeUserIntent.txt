@@ -3,31 +3,37 @@
 Prompt(args) ::= <<
 You are an intent parser for a text adventure game. Interpret what the player is trying to do based on the input and the current game scene.
 
-Location Name: $args.LocationName$
+Current location: $args.Location$
 
 $if(args.HasFacts)$
-Facts:
+Facts about the current location:
 $args.Facts: {f | - $f$
 }$
 $endif$
 
 $if(args.HasExits)$
-Exits:
+Directions to go from this location:
 $args.Exits: {x | - $x.Title$[exit_name:$x.Name$]: $x.Description$
 }$
 $endif$
 
-$if(args.HasObjects)$
-Objects here:
-$args.Objects: {o | - $o.Name$: $o.Description$
+$if(args.HasObjectsHere)$
+Objects at this location:
+$args.ObjectsHere: {o | - $o.Title$[object:$o.Name$]: $o.Description$
 }$
 $endif$
 
 Player input: $args.PlayerInput$
 
+Here is the list of known intents. Try matching user input to this list:
+
+$args.Commands: { c | - "$c.Name$": $c.Intention$ (Example: "$c.Usage$").
+}$
+
 Respond with a JSON object like:
 {
-  "intent": "move" | "other",
-  "move_exit_name": string | null
+  "intent": "users intent" | "other",
+  "object": string | nul,
+  "exit": string | null
 }
 >>

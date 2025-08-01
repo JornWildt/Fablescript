@@ -16,24 +16,27 @@ namespace Fablescript.Core.Engine
     #region Dependencies
 
     private readonly IFablescriptParser FablescriptParser;
+    private readonly IStandardLibraryParser StandardLibraryParser;
     private readonly IGameStateRepository GameStateRepository;
     private readonly IPromptRunner PromptRunner;
     private readonly IStructuredPromptRunner StructuredPromptRunner;
     private readonly FablescriptConfiguration FablescriptConfig;
-    private readonly DeveloperConfiguration DeveloperConfig;
+    private readonly DeveloperConfiguration? DeveloperConfig;
 
     #endregion
 
 
     public FableEngine(
       IFablescriptParser fablescriptParser,
+      IStandardLibraryParser standardLibraryParser,
       IGameStateRepository gameStateRepository,
       IPromptRunner promptRunner,
       IStructuredPromptRunner structuredPromptRunner,
       FablescriptConfiguration fablescriptConfig,
-      DeveloperConfiguration developerConfig)
+      DeveloperConfiguration? developerConfig = null)
     {
       FablescriptParser = fablescriptParser;
+      StandardLibraryParser = standardLibraryParser;
       GameStateRepository = gameStateRepository;
       PromptRunner = promptRunner;
       StructuredPromptRunner = structuredPromptRunner;
@@ -111,33 +114,54 @@ namespace Fablescript.Core.Engine
     async Task ICommandHandler<ApplyUserInputCommand>.InvokeAsync(ApplyUserInputCommand cmd)
     {
       var game = await GameStateRepository.GetAsync(cmd.GameId);
-      //LuaObject location = game.GetObject(game.Player.LocationId);
+      var locationSrc = (LuaTable)game.Player.location;
 
-      //game.InvokeMethod(location.Source, "inspect");
+      dynamic location = new LuaObject(locationSrc);
 
-#if false
-      string locationId = location.Id;
+      var player = (LuaTable)game.Player.Source;
 
-      dynamic[] objectsHere = game.GetAllObjects()
-        .Where(o => (ObjectId)o.Location == locationId)
+      var objectsHere = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.objects_here)
+        .Where(o => !player.Equals(o.Source))
         .ToArray();
+      var facts = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.facts).ToArray();
+      var exits = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.exits).ToArray();
 
-      var facts = LuaConverter.ConvertLuaTableToArray((LuaTable)location.facts).ToArray();
-      var exits = LuaConverter.ConvertLuaTableToArray((LuaTable)location.exits).ToArray();
+      var std = await StandardLibraryParser.GetStandardLibrary();
+      var commands = std.Commands;
+
+      // TODO: Command list generation for prompt can be done once and for all (for globally available commands ... without conditions)
+
+      // FIXME: extract list of parameters such as "{object}" or "{exit}" and use it to generate the JSON intent template
+      // - Afterwards, use it to match parameters on the commands
 
       var args = new
       {
-        Title = (string)location.Title,
-        Introduction = (string)location.Introduction,
+        Location = (string)location.title,
+        Facts = facts.Select(f => f.text).ToArray() ?? [],
         HasFacts = facts.Length > 0,
-        Exits = exits.Select(x => new { Name = x.Name, Title = x.Title, Description = x.Description }).ToArray(),
+        Exits = exits.Select(x => new { Name = x.name, Description = x.description }).ToArray(),
         HasExits = exits.Length > 0,
-        Objects = objectsHere.Select(o => new { Name = (string)o.Name, Title = (string)o.Title, Description = (string?)o.Description }).ToArray(),
-        HasObjects = objectsHere.Length > 0,
+        ObjectsHere = objectsHere.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
+        HasObjectsHere = objectsHere.Length > 0,
+        Commands = commands.Values.Select(c => new { Name = c.Name, Intention = c.Intention, Usage = c.Usage }).ToArray(),
         PlayerInput = cmd.PlayerInput
       };
-      var response = await StructuredPromptRunner.RunPromptAsync<PlayerIntent>("DecodeUserIntent", args);
+      var response = await StructuredPromptRunner.RunPromptAsync<Dictionary<string,string>>("DecodeUserIntent", args);
 
+      var decoded = response.Select(i => i.Key +  "=" + i.Value).Aggregate("", (a,b) => a + ", " + b);
+      cmd.Answer.Value = "Intent: " + decoded;
+
+      if (response.TryGetValue("intent", out string? intent))
+      {
+        if (intent != "other")
+        {
+        }
+      }
+
+      var idleResponse = await PromptRunner.RunPromptAsync("IdleUserInputResponse", args);
+      cmd.Answer.Value += idleResponse;
+
+#if false
       if (response.intent == "move" && response.move_exit_name != null)
       {
         var exit = exits.FirstOrDefault(x => x.Name == response.move_exit_name);
@@ -156,8 +180,6 @@ namespace Fablescript.Core.Engine
         }
       }
 
-      var idleResponse = await PromptRunner.RunPromptAsync("IdleUserInputResponse", args);
-      cmd.Answer.Value += idleResponse;
 #endif
     }
 
@@ -176,7 +198,14 @@ namespace Fablescript.Core.Engine
       var facts = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.facts).ToArray();
       var exits = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.exits).ToArray();
 
-      if (!DeveloperConfig.SkipUseOfAI)
+      if (DeveloperConfig?.SkipUseOfAI ?? false)
+      {
+        var factText = facts.Aggregate("", (a, b) => a + "\n- " + b.text);
+        var exitText = exits.Aggregate("", (a, b) => a + "\n- " + b.name + ": " + b.description);
+        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + (string)b.title + ": " + (string)b.description);
+        return $"### {location.Title}\n{location.Introduction}\n\nFacts:\n{factText}\n\nExits:\n{exitText}\n\nObjects:\n{objects}";
+      }
+      else
       {
         var args = new
         {
@@ -191,13 +220,6 @@ namespace Fablescript.Core.Engine
         };
         var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
         return response;
-      }
-      else
-      {
-        var factText = facts.Aggregate("", (a, b) => a + "\n- " + b.text);
-        var exitText = exits.Aggregate("", (a, b) => a + "\n- " + b.name + ": " + b.description);
-        var objects = objectsHere.Aggregate("", (a, b) => a + "\n- " + (string)b.title + ": " + (string)b.description);
-        return $"### {location.Title}\n{location.Introduction}\n\nFacts:\n{factText}\n\nExits:\n{exitText}\n\nObjects:\n{objects}";
       }
     }
 
@@ -230,7 +252,8 @@ namespace Fablescript.Core.Engine
     public class PlayerIntent
     {
       public string? intent { get; set; }
-      public string? move_exit_name { get; set; }
+      public string? @object { get; set; }
+      public string? exit { get; set; }
     }
   }
 }

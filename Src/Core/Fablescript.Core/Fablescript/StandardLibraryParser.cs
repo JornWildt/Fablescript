@@ -1,17 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Serialization;
+﻿using Fablescript.Core.Contract.Fablescript;
 using Fablescript.Utility.Base;
 using Fablescript.Utility.Base.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Fablescript.Core.Fablescript
 {
-  internal class StandardLibraryParser : FileWatchParser<FableDefinition, FableDefinitionSet>
+  public class StandardLibrary
+  {
+    public Dictionary<string, CommandDefinition> Commands { get; private init; }
+
+    public StandardLibrary(Dictionary<string, CommandDefinition> commands)
+    {
+      Commands = commands;
+    }
+  }
+  
+  
+  internal class StandardLibraryParser : FileWatchParser<FableDefinition, StandardLibrary>, IStandardLibraryParser
   {
     public StandardLibraryParser(
       FileWatchParserConfiguration configuration,
@@ -21,11 +28,18 @@ namespace Fablescript.Core.Fablescript
     }
 
 
-    protected override FableDefinitionSet Parse()
+    Task<StandardLibrary> IStandardLibraryParser.GetStandardLibrary()
+    {
+      var lib = GetCache();
+      return Task.FromResult(lib);
+    }
+
+
+    protected override StandardLibrary Parse()
     {
       Logger.LogDebug("Parse standard library from '{SourceDir}'.", Configuration.SourceDir);
 
-      var fables = new FableDefinitionSet();
+      var commands = new Dictionary<string, CommandDefinition>();
 
       try
       {
@@ -48,19 +62,8 @@ namespace Fablescript.Core.Fablescript
               {
                 var fable = (FableDefinition?)serializer.Deserialize(reader);
                 if (fable != null)
-                  AddFableToFableSet(fable, fables);
+                  HandeFableFile(fable, commands);
               }
-            }
-          }
-
-          foreach (var fable in fables.Values)
-          {
-            fable.Initialize(out var errors);
-            if (errors.Count > 0)
-            {
-              foreach (var error in errors)
-                Logger.LogError(error);
-              throw new ParserException($"Found {errors.Count} errors in fable '{fable.Title}'.");
             }
           }
         }
@@ -72,12 +75,16 @@ namespace Fablescript.Core.Fablescript
         throw new ConfigurationException(msg);
       }
 
-      return fables;
+      return new StandardLibrary(commands);
     }
 
 
-    private void AddFableToFableSet(FableDefinition fable, FableDefinitionSet fables)
+    private void HandeFableFile(FableDefinition fable, Dictionary<string, CommandDefinition> commands)
     {
+      foreach (var command in fable.Commands ?? [])
+      {
+        commands[command.Name] = command;
+      }
     }
   }
 }

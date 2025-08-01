@@ -8,5 +8,33 @@
       <Usage>Inspect {object}</Usage>
       <Invoke>Commands.inspect</Invoke>
     </Command>
+
+    <Command>
+      <Name>take</Name>
+      <Intention>Take, lift, select, choose or similar an object in order to carry it.</Intention>
+      <Usage>Take {object}</Usage>
+      <Invoke>Commands.take</Invoke>
+    </Command>
+
+    <Command>
+      <Name>drop</Name>
+      <Intention>Drop or leave an object in the players inventory.</Intention>
+      <Usage>Drop {object}</Usage>
+      <Invoke>Commands.drop</Invoke>
+    </Command>
+
+    <Command>
+      <Name>inventory</Name>
+      <Intention>Go through the current inventory if items the player is carrying.</Intention>
+      <Usage>Inventory</Usage>
+      <Invoke>Commands.inventory</Invoke>
+    </Command>
+
+    <Command>
+      <Name>move</Name>
+      <Intention>Go, move, fly, swim or similar via one of the exits.</Intention>
+      <Usage>Go {direction}</Usage>
+      <Invoke>Commands.go</Invoke>
+    </Command>
   </Commands>
 </Fable>

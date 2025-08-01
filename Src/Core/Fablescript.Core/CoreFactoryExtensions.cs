@@ -34,6 +34,13 @@ namespace Fablescript.Core
           serviceProvider.GetRequiredService<ILogger<FablescriptParser>>());
       });
 
+      services.AddSingleton<IStandardLibraryParser>(serviceProvider =>
+      {
+        return new StandardLibraryParser(
+          new StandardLibraryParser.FileWatchParserConfiguration(fablescriptConfig.StandardLibrary, fablescriptConfig.SchemaDirectory),
+          serviceProvider.GetRequiredService<ILogger<StandardLibraryParser>>());
+      });
+
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
 
       services.AddSingleton(serviceProvider =>
@@ -54,7 +61,7 @@ namespace Fablescript.Core
       services.AddSingleton<ILLMGenerator, OpenAILLMGenerator>();
       services.AddSingleton<ILLMStructuredGenerator, LLMStructuredGenerator>();
 
-      services.AddVerifiedConfiguration<DeveloperConfiguration>(configuration, "Development");
+      services.AddVerifiedConfiguration<DeveloperConfiguration>(configuration, "Development", isOptional: true);
 
       return services;
     }
