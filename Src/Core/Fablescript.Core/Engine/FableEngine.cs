@@ -56,6 +56,7 @@ namespace Fablescript.Core.Engine
 
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
+      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Commands.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Core.lua"));
       gameState.Initialize();
 
@@ -63,7 +64,7 @@ namespace Fablescript.Core.Engine
 
       foreach (var locDef in fable.Locations)
       {
-        dynamic loc = gameState.CreateBaseObject();
+        dynamic loc = gameState.CreateBaseObject("Objects", locDef.Name);
         loc.name = locDef.Name;
         loc.title = locDef.Title;
         loc.introduction = locDef.Introduction;
@@ -85,7 +86,7 @@ namespace Fablescript.Core.Engine
 
       foreach (var objDef in fable.Objects)
       {
-        dynamic obj = gameState.CreateBaseObject();
+        dynamic obj = gameState.CreateBaseObject("Objects", objDef.Name);
         obj.name = objDef.Name;
         obj.title = objDef.Title;
         obj.description = objDef.Description;
@@ -134,17 +135,25 @@ namespace Fablescript.Core.Engine
       // FIXME: extract list of parameters such as "{object}" or "{exit}" and use it to generate the JSON intent template
       // - Afterwards, use it to match parameters on the commands
 
+      // FIXME: Can be precalculated
+      var parameterNames = commands.Values
+        .SelectMany(c => c.Parameters)
+        .Select(c => c.Name)
+        .Distinct()
+        .ToList();
+
       var args = new
       {
         Location = (string)location.title,
         Facts = facts.Select(f => f.text).ToArray() ?? [],
         HasFacts = facts.Length > 0,
-        Exits = exits.Select(x => new { Name = x.name, Description = x.description }).ToArray(),
+        Exits = exits.Select(x => new { Name = x.name, Title = x.title, Description = x.description }).ToArray(),
         HasExits = exits.Length > 0,
         ObjectsHere = objectsHere.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
         HasObjectsHere = objectsHere.Length > 0,
         Commands = commands.Values.Select(c => new { Name = c.Name, Intention = c.Intention, Usage = c.Usage }).ToArray(),
-        PlayerInput = cmd.PlayerInput
+        PlayerInput = cmd.PlayerInput,
+        ParameterNames = parameterNames
       };
       var response = await StructuredPromptRunner.RunPromptAsync<Dictionary<string,string>>("DecodeUserIntent", args);
 
@@ -155,6 +164,18 @@ namespace Fablescript.Core.Engine
       {
         if (intent != "other")
         {
+          if (commands.TryGetValue(intent, out var command))
+          {
+            var parameters = new List<object?>();
+            foreach (var p in command.Parameters)
+            {
+              string? value = null;
+              response.TryGetValue(p.Name, out value);
+              parameters.Add(value);
+            }
+
+            game.InvokeFunction(command.Invoke, parameters.ToArray());
+          }
         }
       }
 
@@ -209,8 +230,8 @@ namespace Fablescript.Core.Engine
       {
         var args = new
         {
-          Title = (string)location.Title,
-          Introduction = (string)location.Introduction,
+          Title = (string)location.title,
+          Introduction = (string)location.introduction,
           Facts = facts.Select(f => f.text).ToArray() ?? [],
           HasFacts = facts.Length > 0,
           Exits = exits.Select(x => new { Name = x.name, Description = x.description }).ToArray(),

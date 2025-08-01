@@ -1,7 +1,5 @@
-﻿using System.Dynamic;
-using Fablescript.Core.Contract.Engine;
+﻿using Fablescript.Core.Contract.Engine;
 using Fablescript.Core.Contract.Fablescript;
-using Fablescript.Core.Fablescript;
 using Fablescript.Utility.Base.Persistence;
 using NLua;
 
@@ -41,8 +39,8 @@ namespace Fablescript.Core.Engine
 
       // Get the constructor function
       ObjectConstructor = (LuaFunction)ObjectPrototype["new"];
-      
-      Player = CreateBaseObject();
+
+      Player = CreateBaseObject(null, "Player");
       Player.Name = "Player";
     }
 
@@ -66,26 +64,27 @@ namespace Fablescript.Core.Engine
       return arr;
     }
 
-    internal LuaObject CreateBaseObject()
+    internal LuaObject CreateBaseObject(string? ns, string name)
     {
       var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
+
+      if (ns != null)
+      {
+        var nsObj = RuntimeEnvironment[ns] as LuaTable;
+        if (nsObj == null)
+        {
+          nsObj = CreateEmptyLuaTable();
+          RuntimeEnvironment[ns] = nsObj;
+        }
+        nsObj[name] = table;
+      }
+      else
+      {
+        RuntimeEnvironment[name] = table;
+      }
+
       return new LuaObject(table);
     }
-
-    //internal LuaObject AddObject(ObjectId id, ExpandoObject src)
-    //{
-    //  // Call BaseObject:new{...} to create the object in Lua
-    //  var table = (LuaTable)ObjectConstructor.Call(ObjectPrototype)[0];
-
-    //  LuaConverter.CopyToLuaTable(RuntimeEnvironment, table, src);
-
-    //  InvokeMethod(table, "inspect");
-
-    //  var obj = new LuaObject(table);
-    //  Objects[id] = obj;
-
-    //  return obj;
-    //}
 
 
     internal LuaObject GetObject(ObjectId id)
@@ -114,13 +113,13 @@ namespace Fablescript.Core.Engine
       Array.Copy(args, 0, allArgs, 1, args.Length);
       method.Call(allArgs);
     }
-    
-    
-    internal void InvokeFunction(string functionName, params object[] args)
+
+
+    internal void InvokeFunction(string functionName, object?[] args)
     {
       var path = functionName.Split('.');
       var element = RuntimeEnvironment[path[0]];
-      for (int i=1; i<path.Length; i++)
+      for (int i = 1; i < path.Length; i++)
       {
         if (element is LuaTable t)
           element = t[path[i]];

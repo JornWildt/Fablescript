@@ -9,6 +9,7 @@
     <Import_RootNamespace>Resources</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Core\Commands.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Core.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Experiment.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Object.lua" />

@@ -32,8 +32,8 @@ $args.Commands: { c | - "$c.Name$": $c.Intention$ (Example: "$c.Usage$").
 
 Respond with a JSON object like:
 {
-  "intent": "users intent" | "other",
-  "object": string | nul,
-  "exit": string | null
+$args.ParameterNames: { p |   "$p$": string | null,
+}$
+  "intent": "users intent" | "other"
 }
 >>
