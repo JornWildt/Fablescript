@@ -93,7 +93,7 @@ namespace Fablescript.Core.Engine
             }
 
             game.InvokeFunction(command.Invoke, parameters.ToArray());
-            cmd.Answer.Value = string.Join("\n", game.ResponseOutput);
+            cmd.Answer.Value = string.Join("\n\n", game.ResponseOutput);
             return;
           }
         }

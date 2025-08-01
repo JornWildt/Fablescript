@@ -27,10 +27,11 @@ Player input: $args.PlayerInput$
 
 Here is the list of known intents. Try matching user input to this list:
 
-$args.Commands: { c | - "$c.Name$": $c.Intention$ (Example: "$c.Usage$").
+$args.Commands: { c | - intent "$c.Name$": $c.Intention$ (Example: "$c.Usage$").
 }$
 
-Respond with a JSON object like:
+Respond with a JSON object like this:
+
 {
 $args.ParameterNames: { p |   "$p$": string | null,
 }$

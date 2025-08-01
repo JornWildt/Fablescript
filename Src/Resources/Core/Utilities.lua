@@ -27,7 +27,7 @@ function find_exit_by_direction(exits, direction)
   print(exits)
   print("DIR: " .. direction)
   for _, exit in ipairs(exits) do
-    if exit.name == direction then
+    if type(exit.name) == "string" and string.lower(exit.name) == string.lower(direction) then
       return exit
     end
   end
