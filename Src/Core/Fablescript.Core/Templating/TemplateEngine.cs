@@ -1,7 +1,9 @@
-﻿using Antlr4.StringTemplate;
+﻿using System.Collections;
+using Antlr4.StringTemplate;
 using Antlr4.StringTemplate.Misc;
 using Fablescript.Utility.Base.Exceptions;
 using Microsoft.Extensions.Logging;
+using NLua;
 
 namespace Fablescript.Core.Templating
 {
@@ -41,6 +43,14 @@ namespace Fablescript.Core.Templating
           st.Add(p.Key, p.Value);
         }
       }
+      //else if (data is LuaTable table)
+      //{
+      //  foreach (DictionaryEntry p in table)
+      //  {
+      //    if (p.Key != null && p.Value != null)
+      //      st.Add(p.Key?.ToString(), p.Value);
+      //  }
+      //}
       else
       {
         foreach (var p in data.GetType().GetProperties())

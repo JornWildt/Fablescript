@@ -41,8 +41,9 @@ namespace Fablescript.Core.Engine
         cmd.FableId);
 
       gameState.AddFunction("Core", "say", new Action<string>(msg => { gameState.ResponseOutput.Add(msg); }));
-      gameState.AddFunction("Core", "describe_scene", new Action(() => gameState.ResponseOutput.Add(DescribeSceneFunction(gameState))));
+      gameState.AddFunction("Core", "run_prompt", new Func<string,LuaTable,string>((promptName, args) => RunPromptAsync(promptName, args).GetAwaiter().GetResult()));
 
+      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Fun.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
       gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Commands.lua"));

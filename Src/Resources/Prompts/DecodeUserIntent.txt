@@ -13,7 +13,7 @@ $endif$
 
 $if(args.HasExits)$
 Directions to go from this location:
-$args.Exits: {x | - $x.Title$[exit_name:$x.Name$]: $x.Description$
+$args.Exits: {x | - $x.Title$[direction:$x.Name$]: $x.Description$
 }$
 $endif$
 

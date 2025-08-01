@@ -37,16 +37,15 @@ namespace Fablescript.Core.Engine
       DeveloperConfig = developerConfig;
     }
 
-    
-    protected string DescribeSceneFunction(
+
+    protected string DescribeScene(
       GameState game)
     {
-      var location = (LuaTable)game.Player.location;
-      var sceneDescription = DescribeScene(game, location).GetAwaiter().GetResult();
-      return sceneDescription;
+      var result = game.InvokeFunction("describe_scene", []) as string;
+      return result ?? "";
     }
 
-
+#if false
     protected async Task<string> DescribeScene(
       GameState game,
       LuaTable locationSrc)
@@ -84,6 +83,15 @@ namespace Fablescript.Core.Engine
         var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
         return response;
       }
+    }
+#endif
+
+
+    protected async Task<string> RunPromptAsync(string promptName, LuaTable luaArgs)
+    {
+      var args = LuaConverter.ConvertLuaTableToDictionaryOrList(luaArgs);
+      var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
+      return response;
     }
   }
 }

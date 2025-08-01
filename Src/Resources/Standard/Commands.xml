@@ -39,7 +39,7 @@
 
     <Command>
       <Name>move</Name>
-      <Intention>Go, move, fly, swim or similar via one of the exits.</Intention>
+      <Intention>Go, move or similar via one of the exits.</Intention>
       <Usage>Go {direction}</Usage>
       <Invoke>Commands.go</Invoke>
     </Command>

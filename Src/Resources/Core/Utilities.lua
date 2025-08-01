@@ -33,3 +33,38 @@ function find_exit_by_direction(exits, direction)
   end
   return nil
 end
+
+
+function describe_scene()
+  local location = Player.location
+  if location then
+    local facts = Fun.map(
+      location.facts or {}, 
+      function(f) return { f.text } end)
+
+    local exits = Fun.map(
+      location.exits or {}, 
+      function(x) return { Title = x.title, Description = x.description } end)
+
+    local objects_here = Fun.map(
+      location.objects_here or {},
+      function(o) return { Name = o.name, Title = o.title, Description = o.description } end)
+
+    local args = {
+      Title = location.title,
+      Introduction = location.introduction,
+      Facts = facts,
+      HasFacts = next(facts) ~= nil,
+      Exits = exits,
+      HasExits = next(exits) ~= nil,
+      Objects = objects_here,
+      HasObjects = next(objects_here) ~= nil
+    }
+    print("Describe: " .. args.Title)
+    local output = Core.run_prompt("DescribeScene", args)
+    print("Scene: " .. output);
+    return output
+  else
+    return "You are in the void"
+  end
+end

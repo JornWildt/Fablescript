@@ -33,19 +33,18 @@ end
 
 
 function Commands.look()
-  Core.describe_scene()
+  Core.say(describe_scene());
 end
 
 
 function Commands.go(direction)
   print('GO: ' .. direction)
-  Core.say("Try go to: " .. direction)
   local exit = find_exit_by_direction(Player.location.exits, direction)
   local destination = exit.targetLocation
   Player:move_to(destination);
   Player:inspect()
   destination:inspect()
-  Core.describe_scene()
+  Core.say(describe_scene());
 end
 
 

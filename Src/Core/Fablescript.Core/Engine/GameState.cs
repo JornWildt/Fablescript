@@ -127,43 +127,40 @@ namespace Fablescript.Core.Engine
 
     internal void InvokeMethod(LuaTable self, string methodName, params object[] args)
     {
-      InvokeWithOutput(() =>
-      {
-        var method = (LuaFunction)self[methodName];
-        var allArgs = new object[1 + args.Length];
-        allArgs[0] = self;
-        Array.Copy(args, 0, allArgs, 1, args.Length);
-        method.Call(allArgs);
-      });
+      ResponseOutput.Clear();
+
+      var method = (LuaFunction)self[methodName];
+      var allArgs = new object[1 + args.Length];
+      allArgs[0] = self;
+      Array.Copy(args, 0, allArgs, 1, args.Length);
+      method.Call(allArgs);
     }
 
 
-    internal void InvokeFunction(string functionName, object?[] args)
-    {
-      InvokeWithOutput(() =>
-      {
-        var path = functionName.Split('.');
-        var element = RuntimeEnvironment[path[0]];
-        for (int i = 1; i < path.Length; i++)
-        {
-          if (element is LuaTable t)
-            element = t[path[i]];
-        }
-        var func = (LuaFunction)element;
-        if (func != null)
-        {
-          func.Call(args);
-        }
-        else
-          Console.WriteLine("Unknown function: " + functionName);
-      });
-    }
-
-
-    void InvokeWithOutput(Action f)
+    internal object? InvokeFunction(string functionName, object?[] args)
     {
       ResponseOutput.Clear();
-      f();
+
+      var path = functionName.Split('.');
+      var element = RuntimeEnvironment[path[0]];
+      for (int i = 1; i < path.Length; i++)
+      {
+        if (element is LuaTable t)
+          element = t[path[i]];
+      }
+      var func = (LuaFunction)element;
+      if (func != null)
+      {
+        var result = func.Call(args);
+        if (result is not null && result.Length > 0)
+          return result[0];
+        return null;
+      }
+      else
+      {
+        Console.WriteLine("Unknown function: " + functionName);
+        return null;
+      }
     }
   }
 }

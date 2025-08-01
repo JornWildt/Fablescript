@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Fable xmlns="https://fablescript.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="https://fablescript.org/schema/core ../../Src/Core/Fablescript.Core/Fablescript/Fablescript.xsd">
+  <Title>Crypt of Shadows</Title>
+  <Description>An ancient crypt filled with darkness, puzzles, and lurking evil.</Description>
+  <InitialLocation>EntranceHall</InitialLocation>
+
+  <Locations>
+    <Location>
+      <Name>EntranceHall</Name>
+      <Title>Entrance Hall</Title>
+      <Introduction>You stand at the heavy stone doors of an ancient crypt. The air is stale, and torchlight flickers weakly.</Introduction>
+      <Facts>
+        <Fact><Text>The stone walls are covered in moss and faded carvings.</Text></Fact>
+        <Fact><Text>A broken statue lies near the entrance, its eyes hollow.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>North</Name>
+          <Title>North</Title>
+          <Description>A dark corridor leads deeper into the crypt.</Description>
+          <TargetLocationName>GuardianChamber</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>GuardianChamber</Name>
+      <Title>Guardian Chamber</Title>
+      <Facts>
+        <Fact><Text>Large skeletal remains lie scattered across the stone floor.</Text></Fact>
+        <Fact><Text>Two massive stone doors block passage north and east.</Text></Fact>
+        <Fact><Text>A glowing glyph pulses on the floor in the center of the room.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>South</Name>
+          <Title>South</Title>
+          <Description>The entrance hall lies to the south.</Description>
+          <TargetLocationName>EntranceHall</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>North</Name>
+          <Title>North</Title>
+          <Description>A heavy stone door leads to a burial chamber.</Description>
+          <TargetLocationName>BurialChamber</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
+          <Description>An arched hallway leads toward the puzzle room.</Description>
+          <TargetLocationName>PuzzleRoom</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>BurialChamber</Name>
+      <Title>Burial Chamber</Title>
+      <Facts>
+        <Fact><Text>Sarcophagi line the walls, some open, some sealed.</Text></Fact>
+        <Fact><Text>The scent of ancient decay clings to the air.</Text></Fact>
+        <Fact><Text>Scratches suggest something once crawled out of one of the tombs.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>South</Name>
+          <Title>South</Title>
+          <Description>The Guardian Chamber lies to the south.</Description>
+          <TargetLocationName>GuardianChamber</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
+          <Description>A narrow passage leads east toward a hidden vault.</Description>
+          <TargetLocationName>HiddenVault</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>HiddenVault</Name>
+      <Title>Hidden Vault</Title>
+      <Facts>
+        <Fact><Text>Gold glitters in piles, but several chests lie broken and empty.</Text></Fact>
+        <Fact><Text>A skeleton in ornate armor slumps near the back wall.</Text></Fact>
+        <Fact><Text>A locked iron door bars access to another room to the south.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>West</Name>
+          <Title>West</Title>
+          <Description>The burial chamber lies west.</Description>
+          <TargetLocationName>BurialChamber</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>South</Name>
+          <Title>South</Title>
+          <Description>A locked door leads to the Ritual Circle.</Description>
+          <TargetLocationName>RitualCircle</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>PuzzleRoom</Name>
+      <Title>Puzzle Room</Title>
+      <Facts>
+        <Fact><Text>Four pillars each bear a strange symbol: sun, moon, flame, and shadow.</Text></Fact>
+        <Fact><Text>The room hums faintly with magical energy.</Text></Fact>
+        <Fact><Text>Stepping on the wrong tiles causes the floor to shake violently.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>West</Name>
+          <Title>West</Title>
+          <Description>The Guardian Chamber is to the west.</Description>
+          <TargetLocationName>GuardianChamber</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>East</Name>
+          <Title>East</Title>
+          <Description>A shimmering portal pulses at the far end of the room.</Description>
+          <TargetLocationName>CrystalCavern</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>CrystalCavern</Name>
+      <Title>Crystal Cavern</Title>
+      <Facts>
+        <Fact><Text>Vast crystals protrude from the floor and ceiling, glowing faintly.</Text></Fact>
+        <Fact><Text>The hum of magic is almost deafening here.</Text></Fact>
+        <Fact><Text>A massive shadowy creature watches you from the darkness.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>West</Name>
+          <Title>West</Title>
+          <Description>A shimmering portal leads back to the puzzle room.</Description>
+          <TargetLocationName>PuzzleRoom</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>RitualCircle</Name>
+      <Title>Ritual Circle</Title>
+      <Facts>
+        <Fact><Text>A blood-stained circle is etched into the stone floor.</Text></Fact>
+        <Fact><Text>Candles flicker despite the absence of wind.</Text></Fact>
+        <Fact><Text>Dark chanting echoes faintly though no one is visible.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>North</Name>
+          <Title>North</Title>
+          <Description>The vault lies north through the locked door.</Description>
+          <TargetLocationName>HiddenVault</TargetLocationName>
+        </Exit>
+        <Exit>
+          <Name>South</Name>
+          <Title>South</Title>
+          <Description>A tunnel leads down into the dungeon depths.</Description>
+          <TargetLocationName>DungeonDepths</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+
+    <Location>
+      <Name>DungeonDepths</Name>
+      <Title>Dungeon Depths</Title>
+      <Facts>
+        <Fact><Text>The walls are damp and covered in claw marks.</Text></Fact>
+        <Fact><Text>Growls and the sound of shuffling echo through the dark.</Text></Fact>
+        <Fact><Text>Something ancient and powerful stirs here.</Text></Fact>
+      </Facts>
+      <Exits>
+        <Exit>
+          <Name>North</Name>
+          <Title>North</Title>
+          <Description>A tunnel leads up to the ritual circle.</Description>
+          <TargetLocationName>RitualCircle</TargetLocationName>
+        </Exit>
+      </Exits>
+    </Location>
+  </Locations>
+
+  <Objects>
+    <Object>
+      <Name>AncientKey</Name>
+      <Title>Ancient Key</Title>
+      <Description>An iron key covered in runes. It feels warm to the touch.</Description>
+      <Location>GuardianChamber</Location>
+    </Object>
+
+    <Object>
+      <Name>SapphireAmulet</Name>
+      <Title>Sapphire Amulet</Title>
+      <Description>An amulet with a glowing blue gem. Protects against shadow magic.</Description>
+      <Location>CrystalCavern</Location>
+    </Object>
+
+    <Object>
+      <Name>HealingPotion</Name>
+      <Title>Healing Potion</Title>
+      <Description>A small vial of red liquid. Restores vitality when consumed.</Description>
+      <Location>BurialChamber</Location>
+    </Object>
+
+    <Object>
+      <Name>SilverBlade</Name>
+      <Title>Silver Blade</Title>
+      <Description>A finely crafted sword with ancient markings. Especially effective against undead.</Description>
+      <Location>HiddenVault</Location>
+    </Object>
+  </Objects>
+</Fable>
