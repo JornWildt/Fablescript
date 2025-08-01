@@ -37,12 +37,19 @@ function Commands.look()
 end
 
 
-function Commands.look_at(obj)
-  print("You see: " .. obj.name)
+function Commands.go(direction)
+  print('GO: ' .. direction)
+  Core.say("Try go to: " .. direction)
+  local exit = find_exit_by_direction(Player.location.exits, direction)
+  local destination = exit.targetLocation
+  Player:move_to(destination);
+  Player:inspect()
+  destination:inspect()
+  Core.describe_scene()
 end
 
 
-function Commands.drop_object(obj)
-	obj.move_to(Player.location)
+function Commands.look_at(objName)
+  print("You see: " .. objName)
 end
 

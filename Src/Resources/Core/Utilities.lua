@@ -22,3 +22,14 @@ function remove_reference_from_list(list, target)
   end
 end
 
+
+function find_exit_by_direction(exits, direction)
+  print(exits)
+  print("DIR: " .. direction)
+  for _, exit in ipairs(exits) do
+    if exit.name == direction then
+      return exit
+    end
+  end
+  return nil
+end
