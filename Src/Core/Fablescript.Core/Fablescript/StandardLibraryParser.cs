@@ -1,40 +1,29 @@
-﻿using Fablescript.Core.Contract.Fablescript;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using Fablescript.Utility.Base;
 using Fablescript.Utility.Base.Exceptions;
 using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace Fablescript.Core.Fablescript
 {
-  internal class FableDefinitionSet : ConcurrentDictionary<string, FableDefinition> { }
-
-
-  internal class FablescriptParser : FileWatchParser<FableDefinition, FableDefinitionSet>, IFablescriptParser
+  internal class StandardLibraryParser : FileWatchParser<FableDefinition, FableDefinitionSet>
   {
-    public FablescriptParser(
+    public StandardLibraryParser(
       FileWatchParserConfiguration configuration,
-      ILogger<FablescriptParser> logger)
+      ILogger<StandardLibraryParser> logger)
       : base(configuration, logger)
     {
     }
 
 
-    #region IFablescriptParser
-
-    Task<FableDefinition> IFablescriptParser.GetFableAsync(FableId fableId)
-    {
-      var fable = GetCache()[fableId.Value];
-      return Task.FromResult(fable);
-    }
-
-    #endregion
-
-
     protected override FableDefinitionSet Parse()
     {
-      Logger.LogDebug("Parse fable definitions from '{SourceDir}'.", Configuration.SourceDir);
+      Logger.LogDebug("Parse standard library from '{SourceDir}'.", Configuration.SourceDir);
 
       var fables = new FableDefinitionSet();
 
@@ -53,16 +42,13 @@ namespace Fablescript.Core.Fablescript
             }
             else
             {
-              Logger.LogDebug("Parse fable from '{File}'.", filename);
-
-              var filePathElements = filename.Split(['/', '\\']);
-              var fableName = filePathElements[filePathElements.Length - 2];
+              Logger.LogDebug("Parse '{File}'.", filename);
 
               using (XmlReader reader = XmlReader.Create(filename, settings))
               {
                 var fable = (FableDefinition?)serializer.Deserialize(reader);
                 if (fable != null)
-                  AddFableToFableSet(fableName, fable, fables);
+                  AddFableToFableSet(fable, fables);
               }
             }
           }
@@ -90,23 +76,8 @@ namespace Fablescript.Core.Fablescript
     }
 
 
-    private void AddFableToFableSet(string fableName, FableDefinition fable, FableDefinitionSet fables)
+    private void AddFableToFableSet(FableDefinition fable, FableDefinitionSet fables)
     {
-      if (!fables.TryGetValue(fableName, out var fableDefinition))
-      {
-        fableDefinition = new FableDefinition();
-        fables[fableName] = fable;
-      }
-
-      if (!string.IsNullOrEmpty(fable.Title))
-        fableDefinition.Title = fable.Title;
-      if (!string.IsNullOrEmpty(fable.Description))
-        fableDefinition.Description = fable.Description;
-      if (!string.IsNullOrEmpty(fable.InitialLocation))
-        fableDefinition.InitialLocation = fable.InitialLocation;
-
-      foreach (var location in fable.Locations)
-        fableDefinition.Locations.Add(location);
     }
   }
 }

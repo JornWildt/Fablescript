@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Fable xmlns="https://fablescript.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Commands>
+    <Command>
+      <Name>inspect</Name>
+      <Intention>Inspect, examine, look at or observe an object.</Intention>
+      <Usage>Inspect {object}</Usage>
+      <Invoke>Commands.inspect</Invoke>
+    </Command>
+  </Commands>
+</Fable>

@@ -28,6 +28,10 @@ namespace Fablescript.Core.Fablescript
     public List<ObjectDefinition> Objects { get; set; } = new List<ObjectDefinition>();
 
 
+    [XmlArray("Commands")]
+    [XmlArrayItem("Command")]
+    public List<CommandDefinition> Commands { get; set; } = new List<CommandDefinition>();
+
 
     protected IDictionary<string,  LocationDefinition> LocationLookup { set; get; } = new Dictionary<string, LocationDefinition>();
 

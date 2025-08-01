@@ -17,7 +17,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:all>
-      <xs:element name="Title" type="xs:string" minOccurs="1">
+      <xs:element name="Title" type="xs:string" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <html:p>Title of this fable.</html:p>
@@ -31,7 +31,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="InitialLocation" type="m:IdentifierString" minOccurs="1">
+      <xs:element name="InitialLocation" type="m:IdentifierString" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <html:p>Initial player location name.</html:p>
@@ -49,6 +49,13 @@
         <xs:annotation>
           <xs:documentation>
             <html:p>Objects</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Commands" type="m:CommandsType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Commands</html:p>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -253,7 +260,7 @@
     <xs:annotation>
       <xs:documentation>
         <div xmlns="http://www.w3.org/1999/xhtml">
-          <p>Definition of single object.</p>
+          <p>Definition of a single object.</p>
         </div>
       </xs:documentation>
     </xs:annotation>
@@ -289,6 +296,71 @@
     </xs:all>
   </xs:complexType>
 
+  
+  <!-- === COMMANDS === -->
+
+  <xs:complexType name="CommandsType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>List of command definitions.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Command" type="m:CommandType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Single command.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="CommandType">
+    <xs:annotation>
+      <xs:documentation>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+          <p>Definition of a single command.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Name" type="m:IdentifierString" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of this command. Used for internal references.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Intention" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Description of intented use of this command.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Usage" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Example usage of command with placeholdes like {object}.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Invoke" type="xs:string" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <html:p>Name of Lua function to invoke when executing the command.</html:p>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  
+  <!-- === UTILITY -->
 
   <xs:simpleType name="IdentifierString">
     <xs:restriction base="xs:string">

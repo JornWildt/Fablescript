@@ -17,4 +17,7 @@
     <None Include="$(MSBuildThisFileDirectory)Prompts\DescribeScene.txt" />
     <None Include="$(MSBuildThisFileDirectory)Prompts\IdleUserInputResponse.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Standard\Commands.xml" />
+  </ItemGroup>
 </Project>
