@@ -39,6 +39,12 @@ namespace Fablescript.Core.Engine
 
       var player = (LuaTable)game.Player.Source;
 
+      // FIXME: handling objects_here should use Lua function
+      // FIXME: the whole args setup should be in Lua to use the normal scripts for it
+
+      var playersObjects = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)game.Player.objects_here)
+        .ToArray();
+
       var objectsHere = LuaConverter.ConvertLuaTableToEnumerable((LuaTable)location.objects_here)
         .Where(o => !player.Equals(o.Source))
         .ToArray();
@@ -69,6 +75,8 @@ namespace Fablescript.Core.Engine
         HasExits = exits.Length > 0,
         ObjectsHere = objectsHere.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
         HasObjectsHere = objectsHere.Length > 0,
+        PlayersObjects = playersObjects.Select(o => new { Name = (string)o.name, Title = (string)o.title, Description = (string?)o.description }).ToArray(),
+        HasPlayersObjects = playersObjects.Length > 0,
         Commands = commands.Values.Select(c => new { c.Name, c.Intention, c.Usage }).ToArray(),
         cmd.PlayerInput,
         ParameterNames = parameterNames

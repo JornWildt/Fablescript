@@ -24,11 +24,18 @@ end
 
 
 function find_exit_by_direction(exits, direction)
-  print(exits)
   print("DIR: " .. direction)
-  for _, exit in ipairs(exits) do
-    if type(exit.name) == "string" and string.lower(exit.name) == string.lower(direction) then
-      return exit
+  return find_object_by_name(exits, direction)
+end
+
+
+function find_object_by_name(list, name)
+  if not list then return nil end
+
+  local lname = string.lower(name)
+  for _, item in ipairs(list) do
+    if type(item.name) == "string" and string.lower(item.name) == lname then
+      return item
     end
   end
   return nil

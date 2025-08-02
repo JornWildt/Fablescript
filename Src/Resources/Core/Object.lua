@@ -9,6 +9,11 @@ function BaseObject:init()
 end
 
 
+function BaseObject:find_contained_object_by_name(name)
+  local obj = find_object_by_name(self.objects_here, name)
+  return obj
+end
+
 function BaseObject:move_to(location)
   if self.location then
     self.location:remove_object(self)

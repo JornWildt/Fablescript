@@ -23,6 +23,12 @@ $args.ObjectsHere: {o | - $o.Title$[object:$o.Name$]: $o.Description$
 }$
 $endif$
 
+$if(args.HasPlayersObjects)$
+Objects carried by the player:
+$args.PlayersObjects: {o | - $o.Title$[object:$o.Name$]: $o.Description$
+}$
+$endif$
+
 Player input: $args.PlayerInput$
 
 Here is the list of known intents. Try matching user input to this list:
