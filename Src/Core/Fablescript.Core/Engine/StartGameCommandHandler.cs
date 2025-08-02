@@ -11,7 +11,15 @@ namespace Fablescript.Core.Engine
     CommandHandlerBase,
     ICommandHandler<StartGameCommand>
   {
+    #region Dependencies
+
+    private readonly IBuiltInLuaFunctions BuildInLuaFunctions;
+
+    #endregion
+
+
     public StartGameCommandHandler(
+      IBuiltInLuaFunctions buildInLuaFunctions,
       IFablescriptParser fablescriptParser,
       IStandardLibraryParser standardLibraryParser,
       IGameStateRepository gameStateRepository,
@@ -28,6 +36,7 @@ namespace Fablescript.Core.Engine
           fablescriptConfig,
           developerConfig)
     {
+      BuildInLuaFunctions = buildInLuaFunctions;
     }
 
 
@@ -36,18 +45,17 @@ namespace Fablescript.Core.Engine
       var gameId = new GameId(Guid.NewGuid());
       var fable = await FablescriptParser.GetFableAsync(cmd.FableId);
 
+      var corePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), FablescriptConfig.CoreScripts)).Replace('\\', '/');
+
       var gameState = new GameState(
         gameId,
-        cmd.FableId);
+        cmd.FableId,
+        corePath);
 
       gameState.AddFunction("Core", "say", new Action<string>(msg => { gameState.ResponseOutput.Add(msg); }));
-      gameState.AddFunction("Core", "run_prompt", new Func<string,LuaTable,string>((promptName, args) => RunPromptAsync(promptName, args).GetAwaiter().GetResult()));
+      gameState.AddFunction("Core", "run_prompt", new Func<string,LuaTable,string>((promptName, args) => BuildInLuaFunctions.run_prompt(promptName, args)));
 
-      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Fun.lua"));
-      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Utilities.lua"));
-      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Object.lua"));
-      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Commands.lua"));
-      gameState.LoadScript(Path.Combine(FablescriptConfig.CoreScripts, "Core.lua"));
+      gameState.LoadScript("Core");
 
       gameState.Initialize();
 
@@ -120,14 +128,6 @@ namespace Fablescript.Core.Engine
       exit["targetLocation"] = target.Source;
 
       return exit;
-    }
-
-
-    protected async Task<string> RunPromptAsync(string promptName, LuaTable luaArgs)
-    {
-      var args = LuaConverter.ConvertLuaTableToDictionaryOrList(luaArgs);
-      var response = await PromptRunner.RunPromptAsync("DescribeScene", args);
-      return response;
     }
   }
 }

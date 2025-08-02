@@ -30,6 +30,7 @@ function BaseObject:remove_object(obj)
 end
 
 
+-- Inspect any object for debugging.
 function BaseObject:inspect()
   print("'" .. self.name .. "' is at '" .. ((self.location and self.location.name) or "<nowhere>") .. "'")
   for i, v in ipairs(self.objects_here) do

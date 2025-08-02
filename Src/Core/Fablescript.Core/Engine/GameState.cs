@@ -25,11 +25,13 @@ namespace Fablescript.Core.Engine
 
     public GameState(
       GameId id,
-      FableId fableId)
+      FableId fableId,
+      string coreLuaDir)
       : base(id)
     {
       FableId = fableId;
       RuntimeEnvironment = new Lua();
+      RuntimeEnvironment.DoString($"package.path = '{coreLuaDir}; ' .. package.path");
       Objects = new Dictionary<ObjectId, LuaObject>();
       ResponseOutput = new List<string>();
     }
@@ -121,7 +123,7 @@ namespace Fablescript.Core.Engine
 
     internal void LoadScript(string filename)
     {
-      RuntimeEnvironment.DoFile(filename);
+      RuntimeEnvironment.DoString($"require('{filename}')");
     }
 
 

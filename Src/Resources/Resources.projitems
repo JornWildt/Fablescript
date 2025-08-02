@@ -9,7 +9,8 @@
     <Import_RootNamespace>Resources</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Core\Commands.lua" />
+    <None Include="$(MSBuildThisFileDirectory)Core\Commands\HandlingItems.lua" />
+    <None Include="$(MSBuildThisFileDirectory)Core\Commands\Other.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Core.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Experiment.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Fun.lua" />
@@ -20,6 +21,7 @@
     <None Include="$(MSBuildThisFileDirectory)Prompts\IdleUserInputResponse.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Core\Commands\LocationsMovement.lua" />
     <Content Include="$(MSBuildThisFileDirectory)Standard\Commands.xml" />
   </ItemGroup>
 </Project>

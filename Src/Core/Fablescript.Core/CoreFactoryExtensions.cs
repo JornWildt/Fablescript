@@ -24,6 +24,7 @@ namespace Fablescript.Core
     {
       services.AddSingleton<IUnitOfWorkConfigurator<CoreUnitOfWorkContext>, UnitOfWorkConfigurator<CoreUnitOfWorkContext>>();
 
+      services.AddSingleton<IBuiltInLuaFunctions, BuiltInLuaFunctions>();
       services.AddScoped<ICommandHandler<StartGameCommand>, StartGameCommandHandler>();
       services.AddScoped<ICommandHandler<DescribeSceneCommand>, DescribeSceneCommandHandler>();
       services.AddScoped<ICommandHandler<ApplyUserInputCommand>, ApplyUserInputCommandHandler>();
