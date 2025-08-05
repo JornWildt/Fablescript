@@ -109,9 +109,10 @@ namespace Fablescript.Core.Engine
     }
 
 
-    internal LuaObject GetObject(ObjectId id)
+    internal LuaObject GetObject(string name)
     {
-      return Objects[id];
+      var table = (LuaTable)RuntimeEnvironment[name];
+      return table != null ? new LuaObject(table) : throw new ArgumentNullException($"No object named '{name}'.");
     }
 
 

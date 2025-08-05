@@ -15,6 +15,7 @@
     <None Include="$(MSBuildThisFileDirectory)Core\Experiment.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Fun.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Object.lua" />
+    <None Include="$(MSBuildThisFileDirectory)Core\Player.lua" />
     <None Include="$(MSBuildThisFileDirectory)Core\Utilities.lua" />
     <None Include="$(MSBuildThisFileDirectory)Prompts\DecodeUserIntent.txt" />
     <None Include="$(MSBuildThisFileDirectory)Prompts\DescribeScene.txt" />

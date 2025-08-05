@@ -59,9 +59,7 @@ namespace Fablescript.Core.Engine
 
       gameState.Initialize();
 
-      dynamic player = gameState.CreateBaseObject(null, "Player");
-      player.name = "Player";
-      gameState.Player = player;
+      gameState.Player = gameState.GetObject("Player");
 
       var locationName2ObjectMapping = new Dictionary<string, LuaObject>();
 
