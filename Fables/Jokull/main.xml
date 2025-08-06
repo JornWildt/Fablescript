@@ -4,7 +4,7 @@
        xsi:schemaLocation="https://fablescript.org/schema/core ../../Src/Core/Fablescript.Core/Fablescript/Fablescript.xsd">
   <Title>Jokull</Title>
   <Description>A story of ice and mystery.</Description>
-  <InitialLocation>ToolSchack</InitialLocation>
+  <InitialLocation>BlackBeach</InitialLocation>
   <Locations>
     <Location>
       <Name>BlackBeach</Name>

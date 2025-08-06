@@ -4,9 +4,11 @@ Prompt(args) ::= <<
 You are a text adventure narrator. 
 Write a description of the player’s current location using only the facts provided.
 
-The general theme of the description should be one of desolation, mystic and ancient emptiness.
+The general theme of the description should be one of desolation and emptiness.
 
+$if(args.FirstTime && args.Introduction)$
 Introduction: $args.Introduction$
+$endif$
 
 $if(args.HasFacts)$
 Facts:
@@ -26,5 +28,20 @@ $args.Objects: {o | - $o.Title$: $o.Description$
 }$
 $endif$
 
-The player has just arrived. Set the mood and atmosphere, include objects here, and then describe the exits.
+The player has just arrived. Follow these instructions:
+
+$if(args.FirstTime && args.Introduction)$
+- Write the short introduction.
+$endif$
+$if(args.HasFacts)$
+- Set the mood and atmosphere with a short and simple main text based on the facts.
+$else$
+- Set the mood and atmosphere with a short and simple main text.
+$endif$
+$if(args.HasObjects)$
+- List and describe the objects here.
+$endif$
+$if(args.HasExits)$
+- List and describe the exits here.
+$endif$
 >>

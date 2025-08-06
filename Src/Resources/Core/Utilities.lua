@@ -45,6 +45,8 @@ end
 function describe_scene()
   local location = Player.location
   if location then
+    local first_time = not Player.described_locations[location.name]
+
     local facts = Fun.map(
       location.facts or {}, 
       function(f) return { f.text } end)
@@ -62,6 +64,7 @@ function describe_scene()
       function(o) return { Name = o.name, Title = o.title, Description = o.description } end)
 
     local args = {
+      FirstTime = first_time,
       Title = location.title,
       Introduction = location.introduction,
       Facts = facts,
@@ -72,6 +75,7 @@ function describe_scene()
       HasObjects = next(objects_here) ~= nil
     }
     print("Describe: " .. args.Title)
+    Player.described_locations[location.name] = true
     local output = Core.run_prompt("DescribeScene", args)
     return output
   else
